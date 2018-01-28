@@ -1,0 +1,30 @@
+namespace TwoCansBeta1 {
+
+	class Point {
+		field x;
+		field y;
+		
+		constructor(x, y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
+	
+	class Vector {
+		field x;
+		field y;
+		constructor(x, y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
+	
+	class Size {
+		field width;
+		field height;
+		constructor(width, height) {
+			this.width = width;
+			this.height = height;
+		}
+	}
+}

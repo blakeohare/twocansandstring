@@ -1,0 +1,70 @@
+import Graphics2D;
+import ImageResources;
+import Math;
+
+namespace TwoCansBeta1 {
+
+	class TCDefaultLoadingImageScene : TCScene {
+		field loader;
+		field progress = 0.0;
+		field done = false;
+		field barWidth = 0.8;
+		field barHeight = 0.08;
+		field barMarginPx = 10;
+		field isEmpty = false;
+		
+		constructor() : base() { }
+		
+		function update(input) {
+			if (this.loader == null) {
+				this.loader = ImageResources.ImageSheet.loadFromResourcesAsync('everything');
+				if (this.loader.isDone()) {
+					this.isEmpty = true;
+				}
+			}
+			
+			if (this.loader.isDone()) {
+				if (!this.done) {
+					this.done = true;
+					this.progress = 1.0;
+					
+					this.switchScene(this.getNextScene());
+					
+				}
+			} else {
+				this.progress = this.loader.getProgress();
+			}
+		}
+		
+		function getNextScene() {
+			startSceneClass = null;
+			for (scene : Core.Reflection.getClasses(TCScene.class)) {
+				if (scene.getName() == $var['start_scene']) {
+					startSceneClass = scene;
+				}
+			}
+			
+			if (startSceneClass == null) {
+				throw new Exception("Starting scene class not found.");
+			}
+			
+			return startSceneClass.createInstance();
+		}
+		
+		function render() {
+			if (this.isEmpty) return;
+			
+			width = Math.floor(GAME_WIDTH * this.barWidth);
+			left = (GAME_WIDTH - width) / 2;
+			height = Math.floor(GAME_HEIGHT * this.barHeight);
+			top = (GAME_HEIGHT - height) / 2;
+			margin = this.barMarginPx;
+			
+			Graphics2D.Draw.fill(0, 0, 0);
+			Graphics2D.Draw.rectangle(left - margin, top - margin, width + 2 * margin, height + 2 * margin, 128, 128, 128);
+			Graphics2D.Draw.rectangle(left, top, width, height, 64, 64, 64);
+			progressWidth = Math.floor(width * this.progress + .5);
+			Graphics2D.Draw.rectangle(left, top, progressWidth, height, 255, 255, 255);
+		}
+	}
+}

@@ -1,0 +1,21 @@
+import Graphics2D;
+
+namespace TwoCansBeta1 {
+	
+	class Image {
+		
+		field _nativeImage;
+		field width;
+		field height;
+		
+		constructor(nativeImage) {
+			// TODO: verify type and throw
+			if (!(nativeImage is Graphics2D.GraphicsTexture)) {
+				throw new Exception();
+			}
+			this._nativeImage = nativeImage;
+			this.width = nativeImage.width;
+			this.height = nativeImage.height;
+		}
+	}
+}

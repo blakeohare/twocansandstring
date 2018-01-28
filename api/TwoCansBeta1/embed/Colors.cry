@@ -1,0 +1,21 @@
+namespace TwoCansBeta1 {
+	function TCColorMake(r, g, b, a = 255) {
+		return a == 255 ? [r, g, b] : [r, g, b, a];
+	}
+	
+	static class Colors {
+		static field RED = TCColorMake(255, 0, 0);
+		static field YELLOW = TCColorMake(255, 255, 0);
+		static field BLUE = TCColorMake(0, 0, 255);
+		static field GREEN = TCColorMake(0, 200, 40);
+		static field PURPLE = TCColorMake(180, 0, 180);
+		static field ORANGE = TCColorMake(255, 128, 0);
+		static field WHITE = TCColorMake(255, 255, 255);
+		static field BLACK = TCColorMake(0, 0, 0);
+		static field GRAY = TCColorMake(128, 128, 128);
+		static field DARK_GRAY = TCColorMake(64, 64, 64);
+		static field LIGHT_GRAY = TCColorMake(196, 196, 196);
+		static field BROWN = TCColorMake(128, 64, 20);
+		static field PINK = TCColorMake(255, 100, 200);
+	}
+}

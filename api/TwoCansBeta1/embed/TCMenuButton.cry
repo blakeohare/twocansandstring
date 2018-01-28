@@ -1,0 +1,11 @@
+namespace TwoCansBeta1 {
+
+	enum TCMenuButton {
+		LEFT,
+		UP,
+		RIGHT,
+		DOWN,
+		CONFIRM,
+		BACK,
+	}
+}

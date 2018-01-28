@@ -1,0 +1,26 @@
+namespace TwoCansBeta1 {
+
+	class TCEvent {
+		
+		field type;
+		field x;
+		field y;
+		field key;
+		field down;
+		field up;
+		field action;
+		
+		constructor(type, x = null, y = null, key = null, down = false) {
+			this.type = type;
+			this.x = x;
+			this.y = y;
+			if (type == TCEventType.MENU_ACTION) {
+				this.action = key;
+			} else {
+				this.key = key;
+			}
+			this.down = down;
+			this.up = !down;
+		}
+	}
+}

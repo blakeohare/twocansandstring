@@ -1,0 +1,16 @@
+namespace TwoCansBeta1 {
+
+	enum TCEventType {
+		MOUSE_LEFT_DOWN,
+		MOUSE_LEFT_UP,
+		MOUSE_RIGHT_DOWN,
+		MOUSE_RIGHT_UP,
+		MOUSE_MOVE,
+		KEY_DOWN,
+		KEY_UP,
+		MENU_ACTION,
+		GAMEPAD_PUSH,
+		GAMEPAD_RELEASE,
+		GAMEPAD_AXIS,
+	}
+}

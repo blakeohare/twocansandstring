@@ -1,0 +1,20 @@
+namespace TwoCansBeta1 {
+
+	class TCInputState {
+		field events = [];
+		field pressedKeys = {};
+		constructor() {}
+		
+		function getEvents() {
+			
+		}
+		
+		function isKeyPressed(key) {
+			return this.pressedKeys.get(key) == true;
+		}
+		
+		function getGamepadAxis() {
+			return [0.0, 0.0];
+		}
+	}
+}

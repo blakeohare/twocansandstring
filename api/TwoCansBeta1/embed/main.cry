@@ -1,0 +1,100 @@
+import Game;
+import Graphics2D;
+
+namespace TwoCansBeta1 {
+	const GAME_WIDTH = 1024;
+	const GAME_HEIGHT = 576;
+
+	function TCmain() {
+		activeScene = new TCDefaultLoadingImageScene();
+		
+		mouseTypeMap = {
+			Game.EventType.MOUSE_LEFT_DOWN: TCEventType.MOUSE_LEFT_DOWN,
+			Game.EventType.MOUSE_LEFT_UP: TCEventType.MOUSE_LEFT_UP,
+			Game.EventType.MOUSE_RIGHT_DOWN: TCEventType.MOUSE_RIGHT_DOWN,
+			Game.EventType.MOUSE_RIGHT_UP: TCEventType.MOUSE_RIGHT_UP,
+		};
+		keyMenuMap = {
+			Game.KeyboardKey.LEFT: TCMenuButton.LEFT,
+			Game.KeyboardKey.UP: TCMenuButton.UP,
+			Game.KeyboardKey.RIGHT: TCMenuButton.RIGHT,
+			Game.KeyboardKey.DOWN: TCMenuButton.DOWN,
+			Game.KeyboardKey.ENTER: TCMenuButton.CONFIRM,
+			Game.KeyboardKey.SPACE: TCMenuButton.CONFIRM,
+			Game.KeyboardKey.W: TCMenuButton.UP,
+			Game.KeyboardKey.A: TCMenuButton.LEFT,
+			Game.KeyboardKey.S: TCMenuButton.DOWN,
+			Game.KeyboardKey.D: TCMenuButton.RIGHT,
+			Game.KeyboardKey.ESCAPE: TCMenuButton.BACK,
+			Game.KeyboardKey.BACKSPACE: TCMenuButton.BACK,
+		};
+		
+		// TODO: allow these to be overridden
+		fps = ($var['use60fps'] ?? false) == true ? 60 : 30;
+		title = (($var['title'] ?? '') + '').trim();
+		if (title.length == 0) title = "Untitled Game";
+		width = 1024;
+		height = 576;
+		
+		isForumView = ($var['forumview'] ?? false) == true;
+		if (isForumView) {
+			viewWidth = 500;
+		} else {
+			viewWidth = width;
+		}
+		viewHeight = viewWidth * height / width;
+		
+		window = new Game.GameWindow(title, fps, width, height, viewWidth, viewHeight);
+		
+		events = [];
+		
+		while (true) {
+			events.clear();
+			for (event : window.pumpEvents()) {
+				switch (event.type) {
+					case Game.EventType.MOUSE_LEFT_DOWN:
+					case Game.EventType.MOUSE_LEFT_UP:
+					case Game.EventType.MOUSE_RIGHT_DOWN:
+					case Game.EventType.MOUSE_RIGHT_UP:
+						down =
+							event.type == Game.EventType.MOUSE_LEFT_DOWN ||
+							event.type == Game.EventType.MOUSE_RIGHT_DOWN;
+						events.add(new TCEvent(mouseTypeMap[event.type], event.x, event.y, null, down));
+						break;
+					
+					case Game.EventType.MOUSE_MOVE:
+						events.add(new TCEvent(TCEventType.MOUSE_MOVE, event.x, event.y));
+						break;
+					
+					case Game.EventType.KEY_DOWN:
+					case Game.EventType.KEY_UP:
+						down = event.type == EventType.KEY_DOWN;
+						events.add(new TCEvent(
+							down ? TCEventType.KEY_DOWN : TCEventType.KEY_UP,
+							null, null, event.key, down));
+						if (down) {
+							menuEventType = keyMenuMap.get(event.key);
+							if (menuEventType == null) {
+								events.add(new TCEvent(TCEventType.MENU_ACTION, null, null, menuEventType));
+							}
+						}
+						break;
+					
+					case Game.EventType.QUIT:
+						return;
+				}
+			}
+			
+			activeScene.update(events);
+			Graphics2D.Draw.fill(0, 0, 0);
+			activeScene.render();
+			
+			if (TCScene._queuedEvent != null) {
+				activeScene = TCScene._queuedEvent;
+				TCScene._queuedEvent = null;
+			}
+			
+			window.clockTick();
+		}
+	}
+}

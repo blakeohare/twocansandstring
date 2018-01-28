@@ -1,0 +1,21 @@
+namespace TwoCansBeta1 {
+
+	class TCScene {
+	
+		static field _queuedEvent = null;
+		
+		constructor() { }
+		
+		function update() {
+			
+		}
+		
+		function render() {
+			
+		}
+		
+		function switchScene(nextScene) {
+			TCScene._queuedEvent = nextScene;
+		}
+	}
+}

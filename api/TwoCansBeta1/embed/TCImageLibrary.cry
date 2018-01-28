@@ -1,0 +1,32 @@
+import Graphics2D;
+import ImageResources;
+
+namespace TwoCansBeta1 {
+
+	static class TCImageLibrary {
+		static field images = {};
+		static field sheet = null;
+		
+		static function get(path) {
+			img = TCImageLibrary.images.get(path);
+			if (img == null) {
+				path2 = path.replace('\\', '/');
+				while (path2.length > 0 && path2[0] == '/') path2 = path2[1:];
+				img = TCImageLibrary.images.get(path2);
+				if (img != null) {
+					TCImageLibrary.images[path] = img;
+				} else {
+					imgRes = TCImageLibrary.sheet.getImage(path2);
+					if (imgRes == null) { // TODO: check if this actually throws an exception
+						throw new Exception("Image not found: " + path);
+					}
+					
+					img = new Image(Graphics2D.GraphicsTexture.load(imgRes));
+					TCImageLibrary.images[path] = img;
+					TCImageLibrary.images[path2] = img;
+				}
+			}
+			return img;
+		}
+	}
+}

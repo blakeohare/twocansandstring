@@ -1,0 +1,20 @@
+import Graphics2D;
+
+namespace TwoCansBeta1 {
+	
+	// TODO: write native code to apply these directly to the render queue to make it super fast.
+	static class Draw {
+		static function fill(color) {
+			return Graphics2D.Draw.fill(color[0], color[1], color[2]);
+		}
+		
+		static function rectangle(x, y, w, h, c) {
+			return Graphics2D.Draw.rectangle(x, y, w, h, c[0], c[1], c[2], c.length == 3 ? 255 : c[3]);
+		}
+		
+		static function image(img, x, y) {
+			return img._nativeImage.draw(x, y);
+		}
+	}
+	
+}
