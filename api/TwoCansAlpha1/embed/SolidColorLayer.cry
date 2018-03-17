@@ -1,6 +1,6 @@
 import Graphics2D;
 
-namespace TwoCansBeta2 {
+namespace TwoCansAlpha1 {
 	
 	class SolidColorLayer : AbstractLayer {
 		

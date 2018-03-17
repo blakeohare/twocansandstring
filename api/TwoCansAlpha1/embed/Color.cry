@@ -1,4 +1,4 @@
-namespace TwoCansBeta2 {
+namespace TwoCansAlpha1 {
 	
 	class Color {
 		field r = 255;

@@ -2,7 +2,7 @@ import Graphics2D;
 import ImageResources;
 import Math;
 
-namespace TwoCansBeta2 {
+namespace TwoCansAlpha1 {
 	
 	class ImageLoadingScene : AbstractScene {
 		
@@ -27,7 +27,6 @@ namespace TwoCansBeta2 {
 			
 			if (!this.done && this.loader.isDone()) {
 				this.done = true;
-				print("Scene done");
 				this.switchScene(TwoCansApp.getInitialScene());
 			}
 		}

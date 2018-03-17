@@ -1,6 +1,6 @@
-<library name="TwoCansBeta2">
+<library name="TwoCansAlpha1">
 	<description>Library for writing games on TwoCans.</description>
-	<namespace name="TwoCansBeta2">
+	<namespace name="TwoCansAlpha1">
 		
 	</namespace>
 </library>
