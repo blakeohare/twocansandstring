@@ -1,0 +1,9 @@
+namespace TwoCansBeta2 {
+	class AbstractLayer {
+		constructor() { }
+		
+		function update(inputManager, events) { }
+		
+		function render() { }
+	}
+}

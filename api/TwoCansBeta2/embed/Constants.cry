@@ -1,0 +1,6 @@
+namespace TwoCansBeta2 {
+
+	const SCREEN_WIDTH = 640;
+	const SCREEN_HEIGHT = 480;
+
+}

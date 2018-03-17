@@ -1,0 +1,52 @@
+namespace TwoCansBeta2 {
+	
+	class AbstractScene {
+		field _SceneBase_layers = [];
+		
+		constructor() { }
+		
+		function switchScene(next) {
+			TwoCansApp._queuedScene = next;
+		}
+		
+		function update(inputManager, events) { }
+		function render() { }
+		
+		function addLayer(layer) {
+			// TODO: check if already added and then throw
+			this._SceneBase_layers.add(layer);
+			
+			if (this._SceneBase_layers.length > 100) {
+				throw new Exception("Too many layers were added to the scene. (Limit is 100).");
+			}
+			return layer;
+		}
+		
+		function removeLayer(layer) {
+			for (i = 0; i < this._SceneBase_layers.length; ++i) {
+				if (this._SceneBase_layers[i] == layer) {
+					this._SceneBase_layers.remove(i);
+					return layer;
+				}
+			}
+			
+			throw new Exception("Attempted to remove non-existent layer.");
+		}
+		
+		function _SceneBase_update(inputManager, events) {
+			this.update(inputManager, events);
+			
+			for (layer : this._SceneBase_layers) {
+				layer.update(inputManager, events);
+			}
+		}
+		
+		function _SceneBase_render() {
+			this.render();
+			
+			for (layer : this._SceneBase_layers) {
+				layer.render();
+			}
+		}
+	}
+}

@@ -1,0 +1,106 @@
+import Graphics2D;
+
+namespace TwoCansBeta2 {
+	
+	enum GraphicsLayerEvent {
+		RECTANGLE = 1,
+		ELLIPSE = 2,
+		TRIANGLE = 3,
+		QUAD = 4,
+		IMAGE_SIMPLE = 5,
+		IMAGE_SCALED = 6,
+		IMAGE_ROTATED = 7,
+		IMAGE_ALPHA = 8,
+		IMAGE_ADVANCED = 9,
+	}
+	
+	class GraphicsLayer : AbstractLayer {
+		
+		// TODO: use native array
+		field _events = [];
+		field _images = [];
+		
+		constructor() : base() {
+		
+		}
+		
+		function drawRectangle(x, y, w, h, color) {
+			return this._events.concat([GraphicsLayerEvent.RECTANGLE, x, y, w, h, color.r, color.g, color.b, color.a]);
+		}
+		
+		function drawEllipse(x, y, w, h, color) {
+			return this._events.concat([GraphicsLayerEvent.ELLIPSE, x, y, w, h, color.r, color.g, color.b, color.a]);
+		}
+		
+		function drawCircle(centerX, centerY, radius, color) {
+			r2 = radius * 2;
+			return this._events.concat([GraphicsLayerEvent.ELLIPSE, centerX - radius, centerY - radius, r2, r2, color.r, color.g, color.b, color.a]);
+		}
+		
+		function drawTriangle(x1, y1, x2, y2, x3, y3, color) {
+			return this._events.concat([GraphicsLayerEvent.TRIANGLE, x1, y1, x2, y2, x3, y3, color.r, color.g, color.b, color.a]);
+		}
+		
+		function drawQuad(x1, y1, x2, y2, x3, y3, x4, y4, color) {
+			return this._events.concat([GraphicsLayerEvent.QUAD, x1, y1, x2, y2, x3, y3, x4, y4, color.r, color.g, color.b, color.a]);
+		}
+		
+		function drawImage(img, x, y) {
+			this._images.add(img._g2d_image);
+			return this._events.concat([GraphicsLayerEvent.IMAGE_SIMPLE, x, y]);
+		}
+		
+		function renderReset() {
+			this._events.clear();
+		}
+		
+		function render() {
+			// TODO: once you use native, just emit it directly to the Graphics2D render queue at this point and all this craziness goes away.
+			ev = this._events;
+			evLength = ev.length;
+			i = 0;
+			imgIndex = 0;
+			while (i < evLength) {
+				switch (ev[i++]) {
+					case GraphicsLayerEvent.RECTANGLE:
+						Graphics2D.Draw.rectangle(ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++]);
+						break;
+					
+					case GraphicsLayerEvent.ELLIPSE:
+						Graphics2D.Draw.ellipse(ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++]);
+						break;
+					
+					case GraphicsLayerEvent.TRIANGLE:
+						Graphics2D.Draw.triangle(ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++]);
+						break;
+					
+					case GraphicsLayerEvent.QUAD:
+						Graphics2D.Draw.quad(ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++], ev[i++]);
+						break;
+					
+					case GraphicsLayerEvent.IMAGE_SIMPLE:
+						img = this._images[imgIndex++];
+						img.draw(ev[i++], ev[i++]);
+						break;
+					
+					case GraphicsLayerEvent.IMAGE_SCALED:
+						throw new Exception();
+					
+					case GraphicsLayerEvent.IMAGE_ROTATED:
+						throw new Exception();
+					
+					case GraphicsLayerEvent.IMAGE_ALPHA:
+						throw new Exception();
+					
+					case GraphicsLayerEvent.IMAGE_ADVANCED:
+						throw new Exception();
+					
+					default:
+						throw new Exception();
+				}
+			}
+			
+			this._events.clear();
+		}
+	}
+}

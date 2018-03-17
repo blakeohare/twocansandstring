@@ -1,0 +1,17 @@
+import Game;
+import Graphics2D;
+
+namespace TwoCansBeta2 {
+	
+	class InputManager {
+	
+		field pressedKeys = {};
+		
+		function isShiftPressed() { return this.pressedKeys.get(Game.KeyboardKey.SHIFT, false); }
+		function isCtrlPressed() { return this.pressedKeys.get(Game.KeyboardKey.CTRL, false); }
+		
+		function isKeyPressed(key) {
+			return this.pressedKeys.get(key, false);
+		}
+	}
+}

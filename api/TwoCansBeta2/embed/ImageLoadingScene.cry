@@ -1,0 +1,52 @@
+import Graphics2D;
+import ImageResources;
+import Math;
+
+namespace TwoCansBeta2 {
+	
+	class ImageLoadingScene : AbstractScene {
+		
+		field loader = null;
+		field done = false;
+		field counter = 0;
+		field graphicsLayer;
+		field barBgColor = new Color(80, 80, 80);
+		field barFgColor = new Color(0, 100, 255);
+		
+		constructor() : base() {
+			this.addLayer(new SolidColorLayer(Color.BLACK));
+			this.graphicsLayer = this.addLayer(new GraphicsLayer());
+		}
+		
+		function update(inputManager, events) {
+			this.counter++;
+			if (this.done) return;
+			if (this.loader == null) {
+				this.loader = ImageSheet.loadFromResourcesAsync('twocans_everything');
+			}
+			
+			if (!this.done && this.loader.isDone()) {
+				this.done = true;
+				print("Scene done");
+				this.switchScene(TwoCansApp.getInitialScene());
+			}
+		}
+		
+		function render() {
+			width = SCREEN_WIDTH * 4 / 5;
+			height = SCREEN_HEIGHT / 10;
+			barWidth = Math.floor(width * this.getProgress());
+			x = (SCREEN_WIDTH - width) / 2;
+			y = (SCREEN_HEIGHT - height) / 2;
+			
+			this.graphicsLayer.drawRectangle(x, y, width, height, this.barBgColor);
+			this.graphicsLayer.drawRectangle(x, y, barWidth, height, this.barFgColor);
+		}
+		
+		function getProgress() {
+			if (this.done) return 1.0;
+			if (this.loader == null) return 0.0;
+			return this.loader.getProgress();
+		}
+	}
+}

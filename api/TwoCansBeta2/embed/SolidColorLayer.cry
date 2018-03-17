@@ -1,0 +1,24 @@
+import Graphics2D;
+
+namespace TwoCansBeta2 {
+	
+	class SolidColorLayer : AbstractLayer {
+		
+		field _color;
+		
+		constructor(color) : base() {
+			if (!(color is Color)) {
+				throw new InvalidArgumentException("SolidColorLayer requires a Color instance.");
+			}
+			this._color = color;
+		}
+		
+		function render() {
+			if (this._color.a == 255) {
+				Graphics2D.Draw.fill(this._color.r, this._color.g, this._color.b);
+			} else {
+				Graphics2D.Draw.rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, this._color.r, this._color.g, this._color.b, this._color.a);
+			}
+		}
+	}
+}
