@@ -94,6 +94,7 @@ namespace TwoCansAlpha1 {
 		field y;
 		
 		constructor(type, key, button, x, y, down) {
+			this.type = type;
 			this.down = down;
 			this.up = !down;
 			this.key = key;
