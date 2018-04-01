@@ -20,6 +20,7 @@ class TestScene : AbstractScene {
 	
 	field mainLayer;
 	field cursor = [0, 0];
+	field spinningLoc = [320, 240];
 	
 	constructor() : base() {
 		this.addLayer(new SolidColorLayer(Color.WHITE));
@@ -114,6 +115,20 @@ class TestScene : AbstractScene {
 			scrollOffsetY = -arrowKeyVelocity;
 		}
 		
+		v = 10;
+		dx = 0;
+		dy = 0;
+		if (inputManager.isKeyPressed(KeyboardKey.UP)) dy -= v;
+		else if (inputManager.isKeyPressed(KeyboardKey.DOWN)) dy += v;
+		if (inputManager.isKeyPressed(KeyboardKey.LEFT)) dx -= v;
+		else if (inputManager.isKeyPressed(KeyboardKey.RIGHT)) dx += v;
+		spinColor = Color.PINK;
+		if (inputManager.isShiftPressed()) spinColor = Color.RED;
+		else if (inputManager.isCtrlPressed()) spinColor = Color.PURPLE;
+		if (inputManager.isShiftPressed() && inputManager.isCtrlPressed()) spinColor = Color.BROWN;
+		this.spinningLoc[0] += dx;
+		this.spinningLoc[1] += dy;
+		
 		for (event : events) {
 			switch (event.type) {
 				case EventType.KEY:
@@ -159,12 +174,10 @@ class TestScene : AbstractScene {
 		this.mainLayer.drawQuad(50, 50, 70, 50, 70, 70, 50, 80, Color.BLUE);
 		
 		pts = [];
-		centerX = 500;
-		centerY = 240;
 		radius = 40;
 		for (i = 0; i < 4; ++i) {
 			ang = Math.PI * 2 / 4 * i + Math.PI * 2 * rc / 60;
-			pts.add([Math.cos(ang) * radius + centerX, -Math.sin(ang) * radius + centerY]);
+			pts.add([Math.cos(ang) * radius + this.spinningLoc[0], -Math.sin(ang) * radius + this.spinningLoc[1]]);
 		}
 		a = pts[0];
 		b = pts[1];
