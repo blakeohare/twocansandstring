@@ -129,6 +129,11 @@ namespace TwoCansAlpha1 {
 				activeScene._SceneBase_update(inputManager, events);
 				activeScene._SceneBase_render();
 				
+				keyEvents.clear();
+				mouseEvents.clear();
+				menuEvents.clear();
+				gamepadEvents.clear();
+				
 				if (TwoCansApp._queuedScene != null) {
 					activeScene = TwoCansApp._queuedScene;
 					TwoCansApp._queuedScene = null;
