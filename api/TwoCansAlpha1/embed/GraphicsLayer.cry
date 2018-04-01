@@ -101,6 +101,7 @@ namespace TwoCansAlpha1 {
 			}
 			
 			this._events.clear();
+			this._images.clear();
 		}
 	}
 }
