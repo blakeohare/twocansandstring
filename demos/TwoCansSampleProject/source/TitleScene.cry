@@ -1,0 +1,65 @@
+import Math;
+import Random;
+import TwoCansAlpha1;
+
+class Dot {
+	field x;
+	field y;
+	field angle;
+	field color;
+	
+	constructor(x, y, angle, color) {
+		this.x = x;
+		this.y = y;
+		this.angle = angle;
+		this.color = color;
+	}
+}
+
+class TitleScene : AbstractScene {
+	
+	field mainLayer;
+	field dots = [];
+	
+	constructor() : base() {
+		this.addLayer(new SolidColorLayer(Color.WHITE));
+		this.mainLayer = this.addLayer(new GraphicsLayer());
+		
+		for (i = 0; i < 500; i++) {
+			color = new Color(Random.randomInt(255), Random.randomInt(255), Random.randomInt(255));
+			dot = new Dot(Random.randomInt(640), Random.randomInt(480), Random.randomFloat() * 2 * Math.PI, color);
+			this.dots.add(dot);
+		}
+	}
+	
+	function update(inputManager, events) {
+		
+		scrollOffsetX = 0;
+		scrollOffsetY = 0;
+		arrowKeyVelocity = 20;
+		
+		if (inputManager.isKeyPressed(KeyboardKey.LEFT)) {
+			scrollOffsetX = arrowKeyVelocity;
+		} else if (inputManager.isKeyPressed(KeyboardKey.RIGHT)) {
+			scrollOffsetX = -arrowKeyVelocity;
+		}
+		
+		if (inputManager.isKeyPressed(KeyboardKey.UP)) {
+			scrollOffsetY = arrowKeyVelocity;
+		} else if (inputManager.isKeyPressed(KeyboardKey.DOWN)) {
+			scrollOffsetY = -arrowKeyVelocity;
+		}
+		
+		velocity = 2;
+		for (dot : this.dots) {
+			dot.x = (scrollOffsetX + dot.x + Math.cos(dot.angle) * velocity) % 640;
+			dot.y = (scrollOffsetY + dot.y + Math.sin(dot.angle) * velocity) % 480;
+		}
+	}
+	
+	function render() {
+		for (dot : this.dots) {
+			this.mainLayer.drawCircle(dot.x, dot.y, 10, dot.color);
+		}
+	}
+}
