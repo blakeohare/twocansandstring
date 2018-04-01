@@ -1,8 +1,8 @@
 import os
 import zipfile
 
-SDK_NAME = 'TwoCansAlpha1'
-SDK_DIR = 'api/' + SDK_NAME
+SDK_NAMES = ['TwoCansAlpha1']
+SDK_DIR = 'api'
 
 def is_directory(path): return os.path.isdir(path.replace('/', os.sep))
 def directory_list_files(path): return os.listdir(path.replace('/', os.sep))
@@ -32,12 +32,13 @@ def main():
 		print("Must run this from the TwoCans repository root.")
 		return
 	
-	files = []
-	gather_files(SDK_DIR, SDK_NAME, files)
 	ensure_directory_exists('./gen-sdk')
-	archive = zipfile.ZipFile(os.path.join('gen-sdk', SDK_NAME + '.zip'), 'w', zipfile.ZIP_DEFLATED)
-	for abs_path, rel_path in files:
-		archive.write(abs_path.replace('/', os.sep), rel_path)
+	archive = zipfile.ZipFile(os.path.join('gen-sdk', 'TwoCansSDK.zip'), 'w', zipfile.ZIP_DEFLATED)
+	for version in SDK_NAMES:
+		files = []
+		gather_files(SDK_DIR + '/' + version, 'TwoCansSDK/' + version, files)
+		for abs_path, rel_path in files:
+			archive.write(abs_path.replace('/', os.sep), rel_path)
 	archive.close()
 			
 	
