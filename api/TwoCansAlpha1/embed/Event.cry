@@ -22,10 +22,6 @@ namespace TwoCansAlpha1 {
 	}
 	
 	enum KeyboardKey {
-	
-		// TODO: update this when using the next version
-		OPEN_BRACKET = Game.KeyboardKey.OPEN_BRACKET,
-		
 		A = Game.KeyboardKey.A,
 		APOSTROPHE = Game.KeyboardKey.APOSTROPHE,
 		B = Game.KeyboardKey.B,
@@ -61,6 +57,7 @@ namespace TwoCansAlpha1 {
 		NUM_8 = Game.KeyboardKey.NUM_8,
 		NUM_9 = Game.KeyboardKey.NUM_9,
 		O = Game.KeyboardKey.O,
+		OPEN_BRACKET = Game.KeyboardKey.OPEN_BRACKET,
 		P = Game.KeyboardKey.P,
 		PAGE_DOWN = Game.KeyboardKey.PAGE_DOWN,
 		PAGE_UP = Game.KeyboardKey.PAGE_UP,

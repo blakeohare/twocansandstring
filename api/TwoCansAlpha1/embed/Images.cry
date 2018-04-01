@@ -1,0 +1,27 @@
+import Graphics2D;
+
+namespace TwoCansAlpha1 {
+
+	static class Images {
+		static field _images = {};
+		static field _imageSheet = null;
+		
+		static function get(path) {
+			img = Images._images.get(path);
+			if (img != null) return img;
+		
+			canonical_path = path.replace('\\', '/');
+			
+			if (canonical_path.length > 0 && canonical_path[0] == '/') canonical_path = canonical_path[1:];
+			
+			rawImage = Images._imageSheet.getImage(canonical_path);
+			if (rawImage != null) {
+				img = new WrappedImage(Graphics2D.GraphicsTexture.load(rawImage));
+			}
+			
+			if (img == null) throw new Exception("Image not found: '" + path + "'. Image paths must be relative to the source code root.");
+			Images._images[path] = img;
+			return img;
+		}
+	}
+}

@@ -10,6 +10,7 @@ namespace TwoCansAlpha1 {
 	class TwoCansApp {
 		
 		static field _queuedScene = null;
+		static field _images = {};
 		
 		static function mainLoop() {
 			activeScene = new ImageLoadingScene();

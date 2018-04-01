@@ -27,6 +27,7 @@ namespace TwoCansAlpha1 {
 			
 			if (!this.done && this.loader.isDone()) {
 				this.done = true;
+				Images._imageSheet = this.loader;
 				this.switchScene(TwoCansApp.getInitialScene());
 			}
 		}

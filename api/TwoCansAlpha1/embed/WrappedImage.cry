@@ -1,0 +1,19 @@
+import Graphics2D;
+
+namespace TwoCansAlpha1 {
+	
+	// Wrapper does nothing right now.
+	// Wrapping allows the flexibility to add more SDK-specific methods.
+	class WrappedImage {
+		field _g2d_image;
+		field width;
+		field height;
+		
+		constructor(g2d_image) {
+			this._g2d_image = g2d_image;
+			this.width = g2d_image.width;
+			this.height = g2d_image.height;
+		}
+	}
+
+}
