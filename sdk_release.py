@@ -1,7 +1,7 @@
 import os
 import zipfile
 
-SDK_NAMES = ['TwoCansAlpha1']
+SDK_NAMES = ['TwoCansAlpha1', 'TwoCansAlpha2']
 SDK_DIR = 'api'
 
 def is_directory(path): return os.path.isdir(path.replace('/', os.sep))
