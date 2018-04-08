@@ -4,20 +4,6 @@ import TwoCansAlpha2;
 import Graphics2D;
 import Graphics2DText;
 
-class Dot {
-	field x;
-	field y;
-	field angle;
-	field color;
-	
-	constructor(x, y, angle, color) {
-		this.x = x;
-		this.y = y;
-		this.angle = angle;
-		this.color = color;
-	}
-}
-
 class TestScene : AbstractScene {
 	
 	field cursor = [0, 0];
