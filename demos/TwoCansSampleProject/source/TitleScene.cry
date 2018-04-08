@@ -1,6 +1,7 @@
+import Graphics2D;
 import Math;
 import Random;
-import TwoCansAlpha1;
+import TwoCansAlpha2;
 
 class Dot {
 	field x;
@@ -18,15 +19,11 @@ class Dot {
 
 class TitleScene : AbstractScene {
 	
-	field mainLayer;
 	field dots = [];
 	
 	constructor() : base() {
-		this.addLayer(new SolidColorLayer(Color.WHITE));
-		this.mainLayer = this.addLayer(new GraphicsLayer());
-		
 		for (i = 0; i < 500; i++) {
-			color = new Color(Random.randomInt(255), Random.randomInt(255), Random.randomInt(255));
+			color = [Random.randomInt(255), Random.randomInt(255), Random.randomInt(255)];
 			dot = new Dot(Random.randomInt(640), Random.randomInt(480), Random.randomFloat() * 2 * Math.PI, color);
 			this.dots.add(dot);
 		}
@@ -58,8 +55,10 @@ class TitleScene : AbstractScene {
 	}
 	
 	function render() {
+		Graphics2D.Draw.fill(255, 255, 255);
 		for (dot : this.dots) {
-			this.mainLayer.drawCircle(dot.x, dot.y, 10, dot.color);
+			color = dot.color;
+			Graphics2D.Draw.ellipse(dot.x - 10, dot.y - 10, 20, 20, color[0], color[1], color[2]);
 		}
 	}
 }
