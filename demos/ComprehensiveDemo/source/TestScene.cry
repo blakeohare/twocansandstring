@@ -1,6 +1,8 @@
 import Math;
 import Random;
-import TwoCansAlpha1;
+import TwoCansAlpha2;
+import Graphics2D;
+import Graphics2DText;
 
 class Dot {
 	field x;
@@ -18,13 +20,10 @@ class Dot {
 
 class TestScene : AbstractScene {
 	
-	field mainLayer;
 	field cursor = [0, 0];
 	field spinningLoc = [320, 240];
 	
 	constructor() : base() {
-		this.addLayer(new SolidColorLayer(Color.WHITE));
-		this.mainLayer = this.addLayer(new GraphicsLayer());
 	}
 	
 	static field KEY_LOOKUP = {
@@ -97,6 +96,13 @@ class TestScene : AbstractScene {
 		MenuCommand.BACK: 'back',
 	};
 	
+	static field PINK = [255, 128, 160];
+	static field RED = [255, 0, 0];
+	static field PURPLE = [128, 0, 128];
+	static field BROWN = [128, 64, 0];
+	
+	field spinColor = TestScene.PINK;
+	
 	function update(inputManager, events) {
 		
 		scrollOffsetX = 0;
@@ -122,36 +128,40 @@ class TestScene : AbstractScene {
 		else if (inputManager.isKeyPressed(KeyboardKey.DOWN)) dy += v;
 		if (inputManager.isKeyPressed(KeyboardKey.LEFT)) dx -= v;
 		else if (inputManager.isKeyPressed(KeyboardKey.RIGHT)) dx += v;
-		spinColor = Color.PINK;
-		if (inputManager.isShiftPressed()) spinColor = Color.RED;
-		else if (inputManager.isCtrlPressed()) spinColor = Color.PURPLE;
-		if (inputManager.isShiftPressed() && inputManager.isCtrlPressed()) spinColor = Color.BROWN;
+		this.spinColor = TestScene.PINK;
+		if (inputManager.isShiftPressed()) this.spinColor = TestScene.RED;
+		else if (inputManager.isCtrlPressed()) this.spinColor = TestScene.PURPLE;
+		if (inputManager.isShiftPressed() && inputManager.isCtrlPressed()) this.spinColor = TestScene.BROWN;
+		
 		this.spinningLoc[0] += dx;
 		this.spinningLoc[1] += dy;
 		
 		for (event : events) {
 			switch (event.type) {
 				case EventType.KEY:
-					print("Key " + (event.down ? "down" : "up") + " event for " + TestScene.KEY_LOOKUP[event.key]);
+					this.screenPrint("Key " + (event.down ? "down" : "up") + " event for " + TestScene.KEY_LOOKUP[event.key]);
+					if (event.key == KeyboardKey.S) {
+						this.switchScene(new FadeTransitionScene(this, new TestScene(), 3, true, [0, 0, 255]));
+					}
 					break;
 					
 				case EventType.MENU:
-					print("Menu event: " + TestScene.MENU_LOOKUP[event.button]);
+					this.screenPrint("Menu event: " + TestScene.MENU_LOOKUP[event.button]);
 					break;
 					
 				case EventType.MOUSE_PRESS:
-					print("Mouse pressed at: " + event.x + ", " + event.y);
+					this.screenPrint("Mouse pressed at: " + event.x + ", " + event.y);
 					break;
 				case EventType.MOUSE_RELEASE:
-					print("Mouse released at: " + event.x + ", " + event.y);
+					this.screenPrint("Mouse released at: " + event.x + ", " + event.y);
 					break;
 				case EventType.MOUSE_MOVE:
-					print("Mouse move at: " + event.x + ", " + event.y);
+					this.screenPrint("Mouse move at: " + event.x + ", " + event.y);
 					this.cursor[0] = event.x;
 					this.cursor[1] = event.y;
 					break;
 				default:
-					print("Unknown event type " + event.type);
+					this.screenPrint("Unknown event type " + event.type);
 					break;
 			}
 		}
@@ -160,18 +170,20 @@ class TestScene : AbstractScene {
 	
 	field rc = 0;
 	function render() {
+		Graphics2D.Draw.fill(255, 255, 255);
+		
 		rc = this.rc++;
 		
 		stickFigure = Images.get('image.png');
 		x = (4 * rc) % 900 - 200;
-		this.mainLayer.drawImage(stickFigure, x, 240 - stickFigure.height / 2);
-		this.mainLayer.drawImage(Images.get('jpeg.jpg'), 400, 10);
+		stickFigure.draw(x, 240 - stickFigure.height / 2);
+		Images.get('jpeg.jpg').draw(400, 10);
 		
-		this.mainLayer.drawEllipse(100, 100, 200, 100, Color.GREEN);
-		this.mainLayer.drawCircle(150, 350, 80, Color.PURPLE);
-		this.mainLayer.drawRectangle(400, 100, 80, 120, Color.YELLOW);
-		this.mainLayer.drawTriangle(400, 300, 440, 320, 420, 460, Color.RED);
-		this.mainLayer.drawQuad(50, 50, 70, 50, 70, 70, 50, 80, Color.BLUE);
+		Graphics2D.Draw.ellipse(100, 100, 200, 100, 0, 128, 0);
+		this.drawCircle(150, 350, 80, 128, 0, 128);
+		Graphics2D.Draw.rectangle(400, 100, 80, 120, 255, 255, 0);
+		Graphics2D.Draw.triangle(400, 300, 440, 320, 420, 460, 255, 0, 0);
+		Graphics2D.Draw.quad(50, 50, 70, 50, 70, 70, 50, 80, 0, 0, 255);
 		
 		pts = [];
 		radius = 40;
@@ -183,8 +195,34 @@ class TestScene : AbstractScene {
 		b = pts[1];
 		c = pts[2];
 		d = pts[3];
-		this.mainLayer.drawQuad(a[0], a[1], b[0], b[1], c[0], c[1], d[0], d[1], Color.PINK);
+		Graphics2D.Draw.quad(a[0], a[1], b[0], b[1], c[0], c[1], d[0], d[1], this.spinColor[0], this.spinColor[1], this.spinColor[2]);
 		
-		this.mainLayer.drawRectangle(this.cursor[0] - 4, this.cursor[1] - 4, 8, 8, Color.BLACK);
+		Graphics2D.Draw.rectangle(this.cursor[0] - 4, this.cursor[1] - 4, 8, 8, 0, 0, 0);
+		
+		x = 10;
+		y = 10;
+		for (item : this.textBuffer) {
+			item.draw(x, y);
+			y += 20;
+		}
+	}
+	
+	function drawCircle(x, y, radius, r, g, b, a = 255) {
+		// TODO: this should be in Graphics2D. Why not?
+		Graphics2D.Draw.ellipse(x - radius, y - radius, radius * 2, radius * 2, r, g, b, a);
+	}
+	
+	field font;
+	field textBuffer = [];
+	function screenPrint(msg) {
+		if (this.font == null) {
+			fontRes = FontResource.fromSystem('Arial');
+			this.font = fontRes.getRenderer().setColor(0, 0, 0).setSize(12);
+		}
+		img = this.font.render(msg + '');
+		this.textBuffer.add(img);
+		if (this.textBuffer.length > 20) {
+			this.textBuffer = this.textBuffer[1:];
+		}
 	}
 }
