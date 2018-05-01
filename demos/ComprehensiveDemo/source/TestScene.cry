@@ -89,6 +89,8 @@ class TestScene : AbstractScene {
 	
 	field spinColor = TestScene.PINK;
 	
+	field overlayColor = null;
+	
 	function update(inputManager, events) {
 		
 		scrollOffsetX = 0;
@@ -152,6 +154,21 @@ class TestScene : AbstractScene {
 			}
 		}
 		
+		if (inputManager.isKeyPressedThisFrame(KeyboardKey.O)) {
+			this.overlayColor = [255, 0, 0];
+		} else if (inputManager.isKeyReleasedThisFrame(KeyboardKey.O)) {
+			this.overlayColor = [0, 0, 255];
+		} else {
+			this.overlayColor = null;
+		}
+		
+		if (inputManager.didMouseClickHere(400, 100, 80, 120)) {
+			this.overlayColor = [255, 255, 0];
+		}
+		
+		if (inputManager.isMouseOver(480, 220, 10, 10)) {
+			this.overlayColor = [255, 80, 150];
+		}
 	}
 	
 	field rc = 0;
@@ -166,10 +183,12 @@ class TestScene : AbstractScene {
 		Images.get('jpeg.jpg').draw(400, 10);
 		
 		Graphics2D.Draw.ellipse(100, 100, 200, 100, 0, 128, 0);
-		this.drawCircle(150, 350, 80, 128, 0, 128);
-		Graphics2D.Draw.rectangle(400, 100, 80, 120, 255, 255, 0);
+		Graphics2D.Draw.circle(150, 350, 80, 128, 0, 128);
 		Graphics2D.Draw.triangle(400, 300, 440, 320, 420, 460, 255, 0, 0);
 		Graphics2D.Draw.quad(50, 50, 70, 50, 70, 70, 50, 80, 0, 0, 255);
+		
+		Graphics2D.Draw.rectangle(400, 100, 80, 120, 255, 255, 0);
+		Graphics2D.Draw.rectangle(480, 220, 10, 10, 255, 80, 150);
 		
 		pts = [];
 		radius = 40;
@@ -191,11 +210,10 @@ class TestScene : AbstractScene {
 			item.draw(x, y);
 			y += 20;
 		}
-	}
-	
-	function drawCircle(x, y, radius, r, g, b, a = 255) {
-		// TODO: this should be in Graphics2D. Why not?
-		Graphics2D.Draw.ellipse(x - radius, y - radius, radius * 2, radius * 2, r, g, b, a);
+		
+		if (this.overlayColor != null) {
+			Graphics2D.Draw.fill(this.overlayColor[0], this.overlayColor[1], this.overlayColor[2]);
+		}
 	}
 	
 	field font;

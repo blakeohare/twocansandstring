@@ -8,7 +8,7 @@
 		Insert the location of your TwoCans SDK here.
 		For example: <crayonpath>C:\MyStuff\TwoCansSDK</crayonpath>
 	-->
-	<crayonpath></crayonpath>
+	<crayonpath>C:\Things\TwoCans\api</crayonpath>
 
 	<source>source</source>
 	<compilerlocale>en</compilerlocale>

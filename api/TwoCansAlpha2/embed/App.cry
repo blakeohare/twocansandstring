@@ -37,9 +37,10 @@ namespace TwoCansAlpha2 {
 			gamepadEvents = [];
 			menuEvents = [];
 			
-			inputManager = new InputManager();
-			pressedKeys = inputManager.pressedKeys;
-			
+			inputManager = InputManager._tcas_internal_makeInputManager();
+			pressedKeys = inputManager._pressedKeys;
+			pressedKeysThisFrame = inputManager._pressedThisFrame;
+			releasedKeysThisFrame = inputManager._releasedThisFrame;
 			menuKeyConversion = {
 				Game.KeyboardKey.LEFT: MenuCommand.LEFT,
 				Game.KeyboardKey.UP: MenuCommand.UP,
@@ -59,14 +60,27 @@ namespace TwoCansAlpha2 {
 			}
 			
 			while (true) {
+				
+				pressedKeysThisFrame.clear();
+				releasedKeysThisFrame.clear();
+				
+				// Note: multiple clicks in a single frame will get dropped.
+				// Although if the user is worried about this, they'd probably be using
+				// event pumping anyway.
+				inputManager._mouseClickPosition = null;
+				
 				for (event : window.pumpEvents()) {
 					switch (event.type) {
 						case Game.EventType.KEY_DOWN:
 						case Game.EventType.KEY_UP:
 							isDown = event.type == Game.EventType.KEY_DOWN;
 							suppress = false;
-							pressedKeys[event.key] = event.down;
-							
+							pressedKeys[event.key] = isDown;
+							if (isDown) {
+								pressedKeysThisFrame[event.key] = true;
+							} else {
+								releasedKeysThisFrame[event.key] = true;
+							}
 							switch (event.key) {
 								case Game.KeyboardKey.ALT:
 								case Game.KeyboardKey.SHIFT:
@@ -119,6 +133,7 @@ namespace TwoCansAlpha2 {
 						
 						case Game.EventType.MOUSE_LEFT_DOWN:
 							mouseEvents.add(new Event(EventType.MOUSE_PRESS, null, null, event.x, event.y, true));
+							inputManager._mouseClickPosition = [event.x, event.y];
 							break;
 							
 						case Game.EventType.MOUSE_LEFT_UP:
@@ -127,6 +142,9 @@ namespace TwoCansAlpha2 {
 						
 						case Game.EventType.MOUSE_MOVE:
 							mouseEvents.add(new Event(EventType.MOUSE_MOVE, null, null, event.x, event.y, false));
+							mp = inputManager._mousePosition;
+							mp[0] = event.x;
+							mp[1] = event.y;
 							break;
 						
 						case Game.EventType.QUIT:

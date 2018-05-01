@@ -58,7 +58,7 @@ class TitleScene : AbstractScene {
 		Graphics2D.Draw.fill(255, 255, 255);
 		for (dot : this.dots) {
 			color = dot.color;
-			Graphics2D.Draw.ellipse(dot.x - 10, dot.y - 10, 20, 20, color[0], color[1], color[2]);
+			Graphics2D.Draw.circle(dot.x, dot.y, 10, color[0], color[1], color[2]);
 		}
 	}
 }
