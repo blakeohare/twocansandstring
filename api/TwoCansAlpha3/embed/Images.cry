@@ -1,0 +1,40 @@
+import Graphics2D;
+import Math;
+
+namespace TwoCansAlpha2 {
+	
+	static class Images {
+		static field _imageSheet;
+		
+		static field _images = {};
+		static field _imagesAtScale = {};
+		
+		static function get(path) {
+			img = Images._images.get(path);
+			if (img == null) {
+				res = Images._imageSheet.getImage(path);
+				img = Graphics2D.GraphicsTexture.load(res);
+				Images._images[path] = img;
+			}
+			return img;
+		}
+
+		static function getAtScale(path, scale) {
+			size = Math.floor(scale * 100000);
+			lookup = Images._imagesAtScale.get(size);
+			if (lookup == null) {
+				lookup = {};
+				Images._imagesAtScale[size] = lookup;
+			}
+			img = lookup.get(path);
+			if (img == null) {
+				imgOriginal = Images.get(path);
+				width = Math.max(1, Math.floor(imgOriginal.width * scale + .5));
+				height = Math.max(1, Math.floor(imgOriginal.height * scale + .5));
+				img = imgOriginal.scale(width, height);
+				lookup[path] = img;
+			}
+			return img;
+		}
+	}
+}
