@@ -1,7 +1,7 @@
 import Game;
 import Graphics2D;
 
-namespace TwoCansAlpha2 {
+namespace TwoCansAlpha3 {
 	
 	class InputManager {
 		

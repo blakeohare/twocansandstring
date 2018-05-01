@@ -1,6 +1,6 @@
 import Math;
 
-namespace TwoCansAlpha2 {
+namespace TwoCansAlpha3 {
 	
 	class AbstractTransitionScene : AbstractScene {
 		

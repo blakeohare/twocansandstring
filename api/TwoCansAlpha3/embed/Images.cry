@@ -1,7 +1,7 @@
 import Graphics2D;
 import Math;
 
-namespace TwoCansAlpha2 {
+namespace TwoCansAlpha3 {
 	
 	static class Images {
 		static field _imageSheet;

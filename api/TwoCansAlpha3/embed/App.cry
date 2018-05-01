@@ -2,7 +2,7 @@ import Game;
 import Graphics2D;
 import Math;
 
-namespace TwoCansAlpha2 {
+namespace TwoCansAlpha3 {
 
 	const SCREEN_WIDTH = $var['screen_width'] ?? 640;
 	const SCREEN_HEIGHT = $var['screen_height'] ?? 480;

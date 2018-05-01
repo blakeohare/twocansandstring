@@ -2,7 +2,7 @@ import Graphics2D;
 import ImageResources;
 import Math;
 
-namespace TwoCansAlpha2 {
+namespace TwoCansAlpha3 {
 	
 	class ImageLoadingScene : AbstractScene {
 		
