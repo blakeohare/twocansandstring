@@ -17,6 +17,7 @@ namespace TwoCansAlpha3 {
 		field _pressedKeys = {};
 		field _pressedThisFrame = {};
 		field _releasedThisFrame = {};
+		field _pressedCommandsThisFrame = {};
 		field _mousePosition = [0, 0];
 		field _mouseClickPosition = null;
 		
@@ -33,6 +34,10 @@ namespace TwoCansAlpha3 {
 		
 		function isKeyReleasedThisFrame(key) {
 			return this._releasedThisFrame.get(key, false);
+		}
+		
+		function isCommandPressedThisFrame(command) {
+			return this._pressedCommandsThisFrame.get(command, false);
 		}
 		
 		function getMousePosition() {

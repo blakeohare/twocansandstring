@@ -12,6 +12,7 @@ namespace TwoCansAlpha3 {
 		MOUSE_MOVE,
 	}
 	
+	// applied to the .button field of MENU type events.
 	enum MenuCommand {
 		LEFT,
 		UP,

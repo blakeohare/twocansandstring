@@ -30,8 +30,10 @@ namespace TwoCansAlpha3 {
 			width = Math.floor(SCREEN_WIDTH);
 			height = Math.floor(SCREEN_HEIGHT);
 			
-			if (width > 640|| height > 480) throw new InvalidArgumentException("Game screen size must be smaller than 640 x 480 to fit site UI");
-			if (width < 256|| height < 224) throw new InvalidArgumentException("This screen size is too small");
+			//if (width > 640 || height > 480) throw new InvalidArgumentException("Game screen size must be smaller than 640 x 480 to fit site UI");
+			if (width > 800 || height > 600) throw new InvalidArgumentException("Game screen size must be smaller than 640 x 480 to fit site UI");
+			if (width < 256 || height < 224) throw new InvalidArgumentException("This screen size is too small");
+			
 			if (width / height < .5) throw new InvalidArgumentException("This screen size is too tall.");
 			if (width / height > 2) throw new InvalidArgumentException("This screen size is too wide.");
 			
@@ -46,6 +48,8 @@ namespace TwoCansAlpha3 {
 			pressedKeys = inputManager._pressedKeys;
 			pressedKeysThisFrame = inputManager._pressedThisFrame;
 			releasedKeysThisFrame = inputManager._releasedThisFrame;
+			pressedCommandsThisFrame = inputManager._pressedCommandsThisFrame;
+			
 			menuKeyConversion = {
 				Game.KeyboardKey.LEFT: MenuCommand.LEFT,
 				Game.KeyboardKey.UP: MenuCommand.UP,
@@ -68,6 +72,7 @@ namespace TwoCansAlpha3 {
 				
 				pressedKeysThisFrame.clear();
 				releasedKeysThisFrame.clear();
+				pressedCommandsThisFrame.clear();
 				
 				// Note: multiple clicks in a single frame will get dropped.
 				// Although if the user is worried about this, they'd probably be using
@@ -160,6 +165,11 @@ namespace TwoCansAlpha3 {
 				events = keyEvents + mouseEvents;
 				events.concat(menuEvents);
 				events.concat(gamepadEvents);
+				
+				for (menuEvent : menuEvents) {
+					pressedCommandsThisFrame[menuEvent.button] = true;
+				}
+				
 				activeScene._SceneBase_update(inputManager, events);
 				activeScene._SceneBase_render();
 				

@@ -10,6 +10,10 @@ namespace TwoCansAlpha3 {
 			TwoCansApp._queuedScene = next;
 		}
 		
+		function switchSceneFade(next) {
+			return this.switchScene(new FadeTransitionScene(this, next));
+		}
+		
 		function update(inputManager, events) { }
 		function render() { }
 		
