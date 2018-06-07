@@ -6,6 +6,8 @@ namespace TwoCansAlpha3 {
 
 	const SCREEN_WIDTH = $var['screen_width'] ?? 640;
 	const SCREEN_HEIGHT = $var['screen_height'] ?? 480;
+	const GAME_WIDTH = $var['game_width'] ?? SCREEN_WIDTH;
+	const GAME_HEIGHT = $var['game_height'] ?? SCREEN_HEIGHT;
 	const GAME_FPS = ($var['use_60_fps'] == true) ? 60 : 30;
 
 	function startGame() {
@@ -27,17 +29,27 @@ namespace TwoCansAlpha3 {
 			
 			title = $var['game_title'];
 			fps = ($var['use_60_fps'] == true) ? 60 : 30;
-			width = Math.floor(SCREEN_WIDTH);
-			height = Math.floor(SCREEN_HEIGHT);
+			screen_width = Math.floor(SCREEN_WIDTH);
+			screen_height = Math.floor(SCREEN_HEIGHT);
+			game_width = Math.floor(GAME_WIDTH);
+			game_height = Math.floor(GAME_HEIGHT);
 			
-			//if (width > 640 || height > 480) throw new InvalidArgumentException("Game screen size must be smaller than 640 x 480 to fit site UI");
-			if (width > 800 || height > 600) throw new InvalidArgumentException("Game screen size must be smaller than 640 x 480 to fit site UI");
-			if (width < 256 || height < 224) throw new InvalidArgumentException("This screen size is too small");
+			resolutions = [[game_width, game_height], [screen_width, screen_height]];
+			for (i = 0; i < 2; ++i) {
+				width = resolutions[i][0];
+				height = resolutions[i][1];
+				name = i == 0 ? "Game screen" : "Screen";
+				if (width > 800 || height > 600) throw new InvalidArgumentException(name + " size must be smaller than 800 x 600 to fit site UI");
+				if (width < 256 || height < 224) throw new InvalidArgumentException(name + " size is too small");
+				
+				if (width / height < .5) throw new InvalidArgumentException(name + " proportion is too tall.");
+				if (width / height > 2) throw new InvalidArgumentException(name + " proportion is too wide.");
+			}
+			if (game_width > screen_width || game_height > screen_height) {
+				throw new InvalidArgumentException("Game screen dimensions must be smaller than or equal to physical screen size.");
+			}
 			
-			if (width / height < .5) throw new InvalidArgumentException("This screen size is too tall.");
-			if (width / height > 2) throw new InvalidArgumentException("This screen size is too wide.");
-			
-			window = new GameWindow(title, fps, width, height);
+			window = new GameWindow(title, fps, game_width, game_height, screen_width, screen_height);
 			
 			keyEvents = [];
 			mouseEvents = [];
