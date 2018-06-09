@@ -1,0 +1,318 @@
+/*
+
+	API Endpoints
+	
+	URL: twocansandstring.com/games/api/alpha3/syncscope
+	- arguments: {
+		"cookie": { cookie value }
+		^ this cookie value can be set in UserData in a file called tcas_cookie.txt when run locally for testing
+		
+		"gameId": game ID,
+		"syncKey": secret Key,
+		"scope": scope name,
+		"eventId": last known event ID,
+		"events": {
+			"nonce": unique string for each request, avoids replays
+			"keys": [ ... ],
+			"values": [ ... ],
+		},
+	}
+	
+	- returns: {
+		// the event ID that this brings you up to
+		"eventId": integer
+		
+		// a list of events that have occurred
+		// provided as two parallel lists of keys and values.
+		"events": {
+			"keys": keys ...
+			"values": values ...
+			"uids": user IDs ...
+		}
+		
+		// if true, the app should clear all data and use the lookup
+		// table below as a starting base. This is an indication that too much
+		// time has gone by.
+		"clearAndUseLookup": boolean,
+		
+		// 
+		"lookup": {
+			keys ...
+			values ...
+			userIds ...
+		},
+		
+		"users": [
+			{
+				"id": user ID,
+				"name": user name,
+				"login": login ID,
+				"avatar": avatar ID,
+				"you": boolean,
+				"idle": time idle ...
+			},
+			...
+		]
+	}
+	
+	
+
+*/
+
+import Http;
+import Json;
+import Math;
+import Random;
+import UserData;
+
+namespace TwoCansAlpha3 {
+	
+	const URL_PREFIX = ($var['use_beta_endpoint'] == true ? 'http://beta.' : 'https://')
+		+ "twocansandstring.com/games/api/alpha3";
+	
+	const SYNC_INTERVAL = 2.0;
+	
+	class PlayerProfile {
+		field userId;
+		field formattedName;
+		field nameId;
+		field lastPing;
+		
+		static field users = {};
+		
+		static function updateUser(uid, formattedName, nameId) {
+			player = PlayerProfile.getUser(uid);
+			if (player == null) {
+				player = new PlayerProfile(uid, formattedName, nameId);
+			} else {
+				player.formattedName = formattedName;
+				player.nameId = nameId;
+			}
+			return player;
+		}
+		
+		static function getUser(uid) {
+			return PlayerProfile.users.get(uid);
+		}
+		
+		constructor(uid, formattedName, nameId) {
+			this.userId = uid;
+			this.formattedName = formattedName;
+			this.nameId = nameId;
+		}
+	}
+	
+	class NetworkStatusObject {
+		field key;
+		field user;
+		field value;
+		
+		constructor(user, key, value) {
+			this.user = user;
+			this.key = key;
+			this.value = value;
+		}
+	}
+	
+	class MultiplayerScopeSync {
+		
+		field request;
+		field lastSync = 0;
+		field scopeId;
+		
+		field lastKnownEventId = 0;
+		
+		field valuesByKeyByUserId = {};
+		
+		// Invoked when the game sends an initialization response.
+		// If there are too many changes for an incremental response, this may also get called,
+		// such as when you lose your connection for a while.
+		// callback(unorderedStatusObjectList)
+		field initializeCallback;
+		
+		// Invoked when there are incremental changes.
+		// callback(orderedStatusObjectList)
+		field incrementalCallback;
+		
+		// add 2 seconds to this every time you get a 5xx response.
+		// set to 0 when you get a 200 response.
+		field backOffInterval = 0.0;
+		
+		// increase this value if the responses are uninteresting.
+		// set to 0 if the values are interesting.
+		// This is to decrease the rate of polling when nothing is going on.
+		field uninterestingInterval = 0.0;
+		
+		constructor(scopeId) {
+			this.scopeId = scopeId;
+			this.initializeCallback = this.noop;
+			this.incrementalCallback = this.noop;
+		}
+		
+		function noop(ignored) { }
+		
+		function setInitializeCallback(callback) {
+			this.initializeCallback = callback;
+			return this;
+		}
+		
+		function setIncrementalCallback(callback) {
+			this.incrementalCallback = callback;
+			return this;
+		}
+		
+		field queuedEventKeys = [];
+		field queuedEventValues = [];
+		field nonce = Math.floor(Random.randomFloat() * 1000000000) + '';
+		field requestCounter = 0;
+		
+		function queueEvent(key, value) {
+			this.queuedEventKeys.add(key + '');
+			this.queuedEventValues.add(value + '');
+			this.uninterestingInterval = 0.0;
+			
+			return this;
+		}
+		
+		function update() {
+			syncInterval = SYNC_INTERVAL + this.backOffInterval + this.uninterestingInterval;
+			
+			if (this.request == null && Core.currentTime() >= this.lastSync + syncInterval) {
+				
+				// TODO: if this isn't JavaScript
+				
+				cookieData = UserData.fileExists('tcas_cookie.txt')
+					? UserData.fileReadText('tcas_cookie.txt').trim()
+					: null;
+				
+				payload = {
+					"gameId": $var['game_id'],
+					"syncKey": $var['game_secret'],
+					"auth": cookieData,
+					"scopeId": '' + this.scopeId,
+					"eventId": Math.floor(this.lastKnownEventId),
+				};
+				
+				if (this.queuedEventKeys.length > 0) {
+					payload["events"] = {
+						"nonce": this.nonce + "_" + this.requestCounter++,
+						"keys": this.queuedEventKeys,
+						"values": this.queuedEventValues,
+					};
+				}
+				
+				url = URL_PREFIX + '/syncscope';
+				print("Send request to: " + url);
+				print("Outgoing payload: ");
+				outgoingJson = Json.serialize(payload, Json.JsonSerializerFlag.OMIT_DICTIONARY_NULLS);
+				outgoingJson = outgoingJson.replace(',}', '}');
+				print(outgoingJson);
+				this.request = new Http.HttpRequest(url)
+					.setContent(
+						outgoingJson,
+						'application/json')
+					.setMethod('POST')
+					.sendAsync();
+					
+				this.queuedEventKeys.clear();
+				this.queuedEventValues.clear();
+			}
+			
+			if (this.request != null && this.request.isDone()) {
+				print("Response done");
+				response = this.request.getResponse();
+				this.request = null;
+				this.lastSync = Core.currentTime();
+				success = false;
+				rawResponse = response.getContent();
+				print("Status code: " + response.getStatusCode());
+				print("I received this:\n" + rawResponse + "\n-----------");
+				if (response.getStatusCode() == 200) {
+					responseData = Json.parseJson(rawResponse, true);
+					// TODO: verify that the initial user ID is the same as the user ID from the network.
+					// Possibly embed the user ID in the 2nd sync request after you identify from the first request.
+					if (responseData != null) {
+						this.backOffInterval = 0;
+						success = true;
+						this.processServerResponse(responseData);
+					}
+				}
+				
+				if (!success) {
+					this.backOffInterval = Math.min(20.0, this.backOffInterval + 2.0);
+				}
+			}
+		}
+		
+		function processServerResponse(data) {
+			isInitialize = data.get('clearAndUseLookup') == true;
+			
+			if (isInitialize) {
+				this.uninterestingInterval = 0.0;
+				this.valuesByKeyByUserId.clear();
+				kvps = data.get('lookup');
+				keys = kvps['keys'];
+				values = kvps['values'];
+				userIds = kvps['userIds'];
+				length = keys.length;
+				
+				for (i = 0; i < length; ++i) {
+					userId = userIds[i];
+					key = keys[i];
+					value = values[i];
+					uLookup = this.valuesByKeyByUserId.get(userId);
+					if (uLookup == null) {
+						uLookup = {};
+						this.valuesByKeyByUserId[userId] = uLookup;
+					}
+					uLookup[key] = new NetworkStatusObject(userId, key, value);
+				}
+			}
+			
+			events = data.get('events');
+			if (events != null) {
+				keys = events['keys'];
+				values = events['values'];
+				userIds = events['userIds'];
+			} else {
+				keys = [];
+				values = [];
+				userIds = [];
+			}
+			length = keys.length;
+			
+			incrementalEvents = [];
+			for (i = 0; i < length; ++i) {
+				key = keys[i];
+				value = values[i];
+				userId = userIds[i];
+				
+				if (!isInitialize) {
+					incrementalEvents.add(new NetworkStatusObject(userId, key, value));
+				}
+				
+				uLookup = this.valuesByKeyByUserId.get(userId);
+				if (uLookup == null) {
+					uLookup = {};
+					this.valuesByKeyByUserId[userId] = uLookup;
+				}
+				
+				this.uninterestingInterval = 0.0;
+			}
+			
+			if (length == 0) {
+				this.uninterestingInterval = Math.min(this.uninterestingInterval + 1.0, 4.0);
+			}
+			
+			if (isInitialize) {
+				nsoList = [];
+				for (nsoLookup : uLookup.values()) {
+					nsoList.concat(nsoLookup.values());
+				}
+				this.initializeCallback(nsoList);
+			} else {
+				this.incrementalCallback(incrementalEvents);
+			}
+		}
+	}
+}

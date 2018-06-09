@@ -16,13 +16,5 @@ namespace TwoCansAlpha3 {
 		
 		function update(inputManager, events) { }
 		function render() { }
-		
-		function _SceneBase_update(inputManager, events) {
-			this.update(inputManager, events);
-		}
-		
-		function _SceneBase_render() {
-			this.render();
-		}
 	}
 }

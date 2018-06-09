@@ -182,8 +182,8 @@ namespace TwoCansAlpha3 {
 					pressedCommandsThisFrame[menuEvent.button] = true;
 				}
 				
-				activeScene._SceneBase_update(inputManager, events);
-				activeScene._SceneBase_render();
+				activeScene.update(inputManager, events);
+				activeScene.render();
 				
 				keyEvents.clear();
 				mouseEvents.clear();
