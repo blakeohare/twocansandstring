@@ -1,0 +1,35 @@
+namespace TwoCansAlpha3 {
+	
+	class PlayerProfile {
+		field userId;
+		field formattedName;
+		field nameId;
+		field lastPing = 0.0;
+		field isCurrentPlayer = false;
+		
+		static field users = {};
+		
+		static function updateUser(uid, formattedName, nameId, isCurrentPlayer) {
+			player = PlayerProfile.getUser(uid);
+			if (player == null) {
+				player = new PlayerProfile(uid, formattedName, nameId);
+				if (isCurrentPlayer) player.isCurrentPlayer = true;
+				PlayerProfile.users[uid] = player;
+			} else {
+				player.formattedName = formattedName;
+				player.nameId = nameId;
+			}
+			return player;
+		}
+		
+		static function getUser(uid) {
+			return PlayerProfile.users.get(uid);
+		}
+		
+		constructor(uid, formattedName, nameId) {
+			this.userId = uid;
+			this.formattedName = formattedName;
+			this.nameId = nameId;
+		}
+	}
+}

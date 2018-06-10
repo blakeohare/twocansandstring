@@ -1,0 +1,61 @@
+/*
+
+	API Endpoints
+	
+	URL: twocansandstring.com/games/api/alpha3/syncscope
+	- arguments: {
+		"cookie": { cookie value }
+		^ this cookie value can be set in UserData in a file called tcas_cookie.txt when run locally for testing
+		
+		"sessionId": session ID
+		"gameId": game ID,
+		"syncKey": secret Key,
+		"scope": scope name,
+		"eventId": last known event ID,
+		"events": {
+			"nonce": unique string for each request, avoids replays
+			"keys": [ ... ],
+			"values": [ ... ],
+		},
+	}
+	
+	- returns: {
+		// the event ID that this brings you up to
+		"eventId": integer
+		
+		// a list of events that have occurred
+		// provided as two parallel lists of keys and values.
+		"events": {
+			"keys": keys ...
+			"values": values ...
+			"uids": user IDs ...
+		}
+		
+		// if true, the app should clear all data and use the lookup
+		// table below as a starting base. This is an indication that too much
+		// time has gone by.
+		"clearAndUseLookup": boolean,
+		
+		// 
+		"lookup": {
+			keys: ...
+			values: ...
+			uids: ...
+		},
+		
+		"users": [
+			{
+				"id": user ID,
+				"name": user name,
+				"login": login ID,
+				"avatar": avatar ID,
+				"you": boolean,
+				"idle": time idle ...
+			},
+			...
+		]
+	}
+	
+	
+
+*/

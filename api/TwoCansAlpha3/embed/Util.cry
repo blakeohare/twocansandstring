@@ -9,6 +9,7 @@ namespace TwoCansAlpha3 {
 		
 			// for statistically impossible collision considerations:
 			// 36 ** 5 = 60 million
+			// 36 ** 8 = 2.8 trillion
 			// 36 ** 10 = 3.6 quadrillion
 			// 36 ** 12 = 4.7 quintillion
 			// 36 ** 15 = 221 sextillion

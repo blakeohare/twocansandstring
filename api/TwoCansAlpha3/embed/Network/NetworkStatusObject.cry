@@ -1,0 +1,14 @@
+namespace TwoCansAlpha3 {
+	
+	class NetworkStatusObject {
+		field key;
+		field user;
+		field value;
+		
+		constructor(user, key, value) {
+			this.user = user;
+			this.key = key;
+			this.value = value;
+		}
+	}
+}
