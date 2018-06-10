@@ -7,6 +7,7 @@
 		"cookie": { cookie value }
 		^ this cookie value can be set in UserData in a file called tcas_cookie.txt when run locally for testing
 		
+		"sessionId": session ID
 		"gameId": game ID,
 		"syncKey": secret Key,
 		"scope": scope name,
@@ -76,14 +77,17 @@ namespace TwoCansAlpha3 {
 		field userId;
 		field formattedName;
 		field nameId;
-		field lastPing;
+		field lastPing = 0.0;
+		field isCurrentPlayer = false;
 		
 		static field users = {};
 		
-		static function updateUser(uid, formattedName, nameId) {
+		static function updateUser(uid, formattedName, nameId, isCurrentPlayer) {
 			player = PlayerProfile.getUser(uid);
 			if (player == null) {
 				player = new PlayerProfile(uid, formattedName, nameId);
+				if (isCurrentPlayer) player.isCurrentPlayer = true;
+				PlayerProfile.users[uid] = player;
 			} else {
 				player.formattedName = formattedName;
 				player.nameId = nameId;
@@ -179,14 +183,16 @@ namespace TwoCansAlpha3 {
 			
 			if (this.request == null && Core.currentTime() >= this.lastSync + syncInterval) {
 				
-				// TODO: if this isn't JavaScript
-				
+				// This is a hack for if you aren't running the game from within TwoCans.
+				// TODO: something a bit friendlier for if this actually becomes a user scenario.
+				// The SDK should probably include some login UI
 				cookieData = UserData.fileExists('tcas_cookie.txt')
 					? UserData.fileReadText('tcas_cookie.txt').trim()
 					: null;
 				
 				payload = {
 					"gameId": $var['game_id'],
+					"sessionId": TwoCansApp.sessionId,
 					"syncKey": $var['game_secret'],
 					"auth": cookieData,
 					"scopeId": '' + this.scopeId,
@@ -245,6 +251,35 @@ namespace TwoCansAlpha3 {
 		}
 		
 		function processServerResponse(data) {
+		
+			switch ((data.get('errorId') ?? 'INVALID_RESPONSE') + '') {
+			
+				case 'OK':
+					break;
+				
+				case 'INVALID_RESPONSE':
+					throw new Exception("Server generated an invalid response.");
+				
+				case 'NOT_LOGGED_IN':
+				case 'UNKNOWN_GAME_ID':
+				case 'SYNC_KEY_INCORRECT_OR_MISSING':
+				case 'SESSION_EXPIRED':
+				case 'SESSION_SUPERCEDED':
+				case 'REQ_NOT_POST': // regression detection
+				case 'REQUEST_PAYLOAD_MISSING': // regression detection
+				case 'SESSION_ID_MISSING': // regression detection
+					throw new Exception(
+						data.get('error')
+							?? data.get('errorId')
+							?? "Error message not specified.");
+			}
+			
+			playerProfileList = [];
+			for (user : data.get('users') ?? []) {
+				profile = PlayerProfile.updateUser(Core.parseInt(user['id']), formattedName, nameId, isCurrentPlayer == 1);
+				playerProfileList.add(profile);
+			}
+			
 			isInitialize = data.get('clearAndUseLookup') == true;
 			
 			if (isInitialize) {
@@ -309,9 +344,9 @@ namespace TwoCansAlpha3 {
 				for (nsoLookup : uLookup.values()) {
 					nsoList.concat(nsoLookup.values());
 				}
-				this.initializeCallback(nsoList);
+				this.initializeCallback(nsoList, playerProfileList);
 			} else {
-				this.incrementalCallback(incrementalEvents);
+				this.incrementalCallback(incrementalEvents, playerProfileList);
 			}
 		}
 	}

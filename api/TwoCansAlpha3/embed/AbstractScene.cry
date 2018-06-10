@@ -2,8 +2,6 @@ namespace TwoCansAlpha3 {
 	
 	class AbstractScene {
 
-		field _SceneBase_layers = [];
-		
 		constructor() { }
 		
 		function switchScene(next) {

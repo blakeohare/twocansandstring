@@ -16,6 +16,8 @@ namespace TwoCansAlpha3 {
 
 	class TwoCansApp {
 		
+		static field sessionId = Util.generateToken(10);
+		
 		static field _queuedScene = null;
 		static field _images = {};
 		static field _rc = 0;
