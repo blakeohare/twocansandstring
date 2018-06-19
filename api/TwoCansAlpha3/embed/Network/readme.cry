@@ -4,11 +4,11 @@
 	
 	URL: twocansandstring.com/games/api/alpha3/syncscope
 	- arguments: {
-		"cookie": { cookie value }
+		"auth": { cookie value }
 		^ this cookie value can be set in UserData in a file called tcas_cookie.txt when run locally for testing
 		
-		"sessionId": session ID
-		"gameId": game ID,
+		"session": session token
+		"game": game name,
 		"syncKey": secret Key,
 		"scope": scope name,
 		"eventId": last known event ID,
@@ -21,7 +21,9 @@
 	
 	- returns: {
 		// the event ID that this brings you up to
-		"eventId": integer
+		"eventId": integer,
+		
+		"scopeId": integer,
 		
 		// a list of events that have occurred
 		// provided as two parallel lists of keys and values.

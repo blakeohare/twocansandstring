@@ -4,6 +4,9 @@ import Math;
 import Random;
 import UserData;
 
+// TODO: the payload needs to be re-sent until there is a fully successful request.
+// Captive portal 200's are messing with this.
+
 namespace TwoCansAlpha3 {
 	
 	const URL_PREFIX = ($var['use_beta_endpoint'] == true ? 'http://beta.' : 'https://')
@@ -99,11 +102,11 @@ namespace TwoCansAlpha3 {
 					: null;
 				
 				payload = {
-					"gameId": $var['game_id'],
-					"sessionId": TwoCansApp.sessionId,
+					"game": $var['game_id'],
+					"session": TwoCansApp.sessionId,
 					"syncKey": $var['game_secret'],
 					"auth": cookieData,
-					"scopeId": '' + this.scopeId,
+					"scope": '' + this.scopeId,
 					"eventId": Math.floor(this.lastKnownEventId),
 				};
 				
