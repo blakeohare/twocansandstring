@@ -10,6 +10,9 @@ namespace TwoCansAlpha3 {
 		MOUSE_PRESS,
 		MOUSE_RELEASE,
 		MOUSE_MOVE,
+		TOUCH_PRESS,
+		TOUCH_RELEASE,
+		TOUCH_MOVE,
 	}
 	
 	// applied to the .button field of MENU type events.
@@ -90,12 +93,14 @@ namespace TwoCansAlpha3 {
 		field key;
 		field x;
 		field y;
+		field pointerId;
 		
-		constructor(type, key, button, x, y, down) {
+		constructor(type, key, button, x, y, down, pointerId) {
 			this.type = type;
 			this.down = down;
 			this.up = !down;
 			this.key = key;
+			this.pointerId = pointerId;
 			this.button = button;
 			this.x = x;
 			this.y = y;
