@@ -33,11 +33,11 @@ namespace TwoCansAlpha3 {
 		function render() {
 			Graphics2D.Draw.fill(0, 0, 0);
 			
-			width = SCREEN_WIDTH * 4 / 5;
-			height = SCREEN_HEIGHT / 10;
+			width = GAME_WIDTH * 4 / 5;
+			height = GAME_HEIGHT / 10;
 			barWidth = Math.floor(width * this.getProgress());
-			x = (SCREEN_WIDTH - width) / 2;
-			y = (SCREEN_HEIGHT - height) / 2;
+			x = (GAME_WIDTH - width) / 2;
+			y = (GAME_HEIGHT - height) / 2;
 			
 			Graphics2D.Draw.rectangle(x, y, width, height, this.barBgColor[0], this.barBgColor[1], this.barBgColor[2]);
 			Graphics2D.Draw.rectangle(x, y, barWidth, height, this.barFgColor[0], this.barFgColor[1], this.barFgColor[2]);

@@ -26,7 +26,7 @@ namespace TwoCansAlpha3 {
 			g = this._fts_colorRGB[1];
 			b = this._fts_colorRGB[2];
 			alpha = Math.floor(amount * 255);
-			Graphics2D.Draw.rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, r, g, b, alpha);
+			Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, r, g, b, alpha);
 		}
 	}
 }

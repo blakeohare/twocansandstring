@@ -25,6 +25,21 @@ namespace TwoCansAlpha3 {
 		BACK,
 	}
 	
+	enum ConsoleButton {
+		AXIS1,
+		AXIS2,
+		DPAD,
+		A,
+		B,
+		X,
+		Y,
+		START,
+		LEFT_BUMPER,
+		RIGHT_BUMPER,
+		LEFT_TRIGGER,
+		RIGHT_TRIGGER,
+	}
+	
 	enum KeyboardKey {
 		A = Game.KeyboardKey.A,
 		APOSTROPHE = Game.KeyboardKey.APOSTROPHE,
