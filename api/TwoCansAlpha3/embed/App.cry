@@ -53,6 +53,8 @@ namespace TwoCansAlpha3 {
 			
 			window = new GameWindow(title, fps, game_width, game_height, screen_width, screen_height);
 			
+			window.setPointerCanonicalizationMode(PointerCanonicalizerMode.CONVERT_MOUSE_TO_TOUCH);
+			
 			keyEvents = [];
 			mouseEvents = [];
 			gamepadEvents = [];
@@ -143,7 +145,7 @@ namespace TwoCansAlpha3 {
 									if (isDown) {
 										menuCommand = menuKeyConversion.get(event.key);
 										if (menuCommand != null) {
-											menuEvents.add(new Event(EventType.MENU, menuCommand, menuCommand, 0, 0, true));
+											menuEvents.add(new Event(EventType.MENU, menuCommand, menuCommand, 0, 0, true, 0));
 										}
 									}
 									break;
@@ -151,24 +153,30 @@ namespace TwoCansAlpha3 {
 							
 							if (!suppress) {
 								//type, key, button, x, y, down
-								keyEvents.add(new Event(EventType.KEY, event.key, null, 0, 0, isDown));
+								keyEvents.add(new Event(EventType.KEY, event.key, null, 0, 0, isDown, 0));
 							}
 							break;
 						
 						case Game.EventType.MOUSE_LEFT_DOWN:
-							mouseEvents.add(new Event(EventType.MOUSE_PRESS, null, null, event.x, event.y, true));
+							mouseEvents.add(new Event(EventType.MOUSE_PRESS, null, null, event.x, event.y, true, 0));
 							inputManager._mouseClickPosition = [event.x, event.y];
 							break;
 							
 						case Game.EventType.MOUSE_LEFT_UP:
-							mouseEvents.add(new Event(EventType.MOUSE_RELEASE, null, null, event.x, event.y, false));
+							mouseEvents.add(new Event(EventType.MOUSE_RELEASE, null, null, event.x, event.y, false, 0));
 							break;
 						
 						case Game.EventType.MOUSE_MOVE:
-							mouseEvents.add(new Event(EventType.MOUSE_MOVE, null, null, event.x, event.y, false));
+							mouseEvents.add(new Event(EventType.MOUSE_MOVE, null, null, event.x, event.y, false, 0));
 							mp = inputManager._mousePosition;
 							mp[0] = event.x;
 							mp[1] = event.y;
+							break;
+						
+						case Game.EventType.TOUCH_START:
+						case Game.EventType.TOUCH_END:
+						case Game.EventType.TOUCH_MOVE:
+							print(['TOUCH', event.type, event.id, event.x, event.y]);
 							break;
 						
 						case Game.EventType.QUIT:
