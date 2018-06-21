@@ -176,7 +176,7 @@ namespace TwoCansAlpha3 {
 						case Game.EventType.TOUCH_START:
 						case Game.EventType.TOUCH_END:
 						case Game.EventType.TOUCH_MOVE:
-							print(['TOUCH', event.type, event.id, event.x, event.y]);
+							//print(['TOUCH', event.type, event.id, event.x, event.y]);
 							break;
 						
 						case Game.EventType.QUIT:
