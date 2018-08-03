@@ -41,7 +41,7 @@ namespace TwoCansAlpha3 {
 				width = resolutions[i][0];
 				height = resolutions[i][1];
 				name = i == 0 ? "Game screen" : "Screen";
-				if (width > 800 || height > 600) throw new InvalidArgumentException(name + " size must be smaller than 800 x 600 to fit site UI");
+				if (width > 1024 || height > 600) throw new InvalidArgumentException(name + " size must be smaller than 800 x 600 to fit site UI");
 				if (width < 256 || height < 224) throw new InvalidArgumentException(name + " size is too small");
 				
 				if (width / height < .5) throw new InvalidArgumentException(name + " proportion is too tall.");
