@@ -1,4 +1,5 @@
 import Game;
+import Gamepad;
 import Graphics2D;
 
 namespace TwoCansAlpha3 {
@@ -21,19 +22,102 @@ namespace TwoCansAlpha3 {
 		field _mousePosition = [0, 0];
 		field _mouseClickPosition = null;
 		
+		field _axisDigitalState = {
+			Gamepad.XBoxButtonId.AXIS1: [0, 0],
+			Gamepad.XBoxButtonId.AXIS2: [0, 0],
+			Gamepad.XBoxButtonId.DPAD: [0, 0],
+		};
+		
+		field _axisAnalogState = {
+			Gamepad.XBoxButtonId.AXIS1: [0.0, 0.0],
+			Gamepad.XBoxButtonId.AXIS2: [0.0, 0.0],
+			Gamepad.XBoxButtonId.DPAD: [0.0, 0.0],
+		};
+		field _gamepadButtonState = {
+			Gamepad.XBoxButtonId.A: false,
+			Gamepad.XBoxButtonId.B: false,
+			Gamepad.XBoxButtonId.X: false,
+			Gamepad.XBoxButtonId.Y: false,
+			Gamepad.XBoxButtonId.START: false,
+			Gamepad.XBoxButtonId.LEFT_BUMPER: false,
+			Gamepad.XBoxButtonId.RIGHT_BUMPER: false,
+		};
+		
+		function _refreshGamepad(event, menuEventsOut) {
+			menuButton = null;
+			switch (event.buttonId) {
+				case Gamepad.XBoxButtonId.AXIS1:
+				case Gamepad.XBoxButtonId.AXIS2:
+				case Gamepad.XBoxButtonId.DPAD:
+					aState = this._axisAnalogState[event.buttonId];
+					dState = this._axisDigitalState[event.buttonId];
+					x = event.x;
+					y = event.y;
+					aState[0] = x;
+					aState[1] = y;
+					if (x > -0.4 && dState[0] == -1) {
+						dState[0] = 0;
+					} else if (x < 0.4 && dState[0] == 1) {
+						dState[0] = 0;
+					}
+					if (x > 0.6 && dState[0] == 0) {
+						dState[0] = 1;
+						menuButton = MenuCommand.RIGHT;
+					} else if (x < -0.6 && dState[0] == 0) {
+						dState[0] = -1;
+						menuButton = MenuCommand.LEFT;
+					}
+					if (y > -0.4 && dState[1] == -1) {
+						dState[1] = 0;
+					} else if (y < 0.4 && dState[1] == 1) {
+						dState[1] = 0;
+					}
+					if (y > 0.6 && dState[1] == 0) {
+						dState[1] = 1;
+						menuButton = MenuCommand.DOWN;
+					} else if (y < -0.6 && dState[1] == 0) {
+						dState[1] = -1;
+						menuButton = MenuCommand.UP;
+					}
+					break;
+				case Gamepad.XBoxButtonId.A:
+				case Gamepad.XBoxButtonId.X:
+				case Gamepad.XBoxButtonId.Y:
+				case Gamepad.XBoxButtonId.START:
+					menuButton = MenuCommand.CONFIRM;
+					this._gamepadButtonState[event.buttonId] = event.value == true;
+					break;
+				
+				case Gamepad.XBoxButtonId.B:
+					menuButton = MenuCommand.BACK;
+					this._gamepadButtonState[event.buttonId] = event.value == true;
+					break;
+				
+			}
+			if (menuButton != null) {
+				menuEventsOut.add(new Event(EventType.MENU, menuButton, menuButton, 0, 0, true, 0));
+			}
+		}
+		
 		function isShiftPressed() { return this._pressedKeys.get(Game.KeyboardKey.SHIFT, false); }
 		function isCtrlPressed() { return this._pressedKeys.get(Game.KeyboardKey.CTRL, false); }
 		
-		// TODO: add direct axis querying
-		
 		function getAxis(axisName) {
-			// TODO: implement this properly.
-			output = [0.0, 0.0];
-			if (this._pressedKeys.get(KeyboardKey.LEFT, false)) output[0] = -1.0;
-			else if (this._pressedKeys.get(KeyboardKey.RIGHT, false)) output[0] = 1.0;
-			if (this._pressedKeys.get(KeyboardKey.UP, false)) output[1] = -1.0;
-			else if (this._pressedKeys.get(KeyboardKey.DOWN, false)) output[1] = 1.0;
-			return output;
+			// Keyboard will override gamepad's AXIS1 value, if any arrow keys are pressed.
+			if (axisName == Gamepad.XBoxButtonId.AXIS1) {
+				output = [null, null];
+				if (this._pressedKeys.get(KeyboardKey.LEFT, false)) output[0] = -1.0;
+				else if (this._pressedKeys.get(KeyboardKey.RIGHT, false)) output[0] = 1.0;
+				if (this._pressedKeys.get(KeyboardKey.UP, false)) output[1] = -1.0;
+				else if (this._pressedKeys.get(KeyboardKey.DOWN, false)) output[1] = 1.0;
+				
+				if (output[0] != null || output[1] != null) {
+					if (output[0] == null) output[0] = 0.0;
+					if (output[1] == null) output[1] = 0.0;
+					return output;
+				}
+			}
+			return this._axisAnalogState[axisName].clone();
 		}
 		
 		function isKeyPressed(key) {

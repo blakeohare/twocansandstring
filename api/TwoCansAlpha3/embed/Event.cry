@@ -1,4 +1,5 @@
 import Game;
+import Gamepad;
 import Graphics2D;
 
 namespace TwoCansAlpha3 {
@@ -26,18 +27,18 @@ namespace TwoCansAlpha3 {
 	}
 	
 	enum ConsoleButton {
-		AXIS1,
-		AXIS2,
-		DPAD,
-		A,
-		B,
-		X,
-		Y,
-		START,
-		LEFT_BUMPER,
-		RIGHT_BUMPER,
-		LEFT_TRIGGER,
-		RIGHT_TRIGGER,
+		AXIS1 = Gamepad.XBoxButtonId.AXIS1,
+		AXIS2 = Gamepad.XBoxButtonId.AXIS2,
+		DPAD = Gamepad.XBoxButtonId.DPAD,
+		A = Gamepad.XBoxButtonId.A,
+		B = Gamepad.XBoxButtonId.B,
+		X = Gamepad.XBoxButtonId.X,
+		Y = Gamepad.XBoxButtonId.Y,
+		START = Gamepad.XBoxButtonId.START,
+		LEFT_BUMPER = Gamepad.XBoxButtonId.LEFT_BUMPER,
+		RIGHT_BUMPER = Gamepad.XBoxButtonId.RIGHT_BUMPER,
+		LEFT_TRIGGER = Gamepad.XBoxButtonId.LEFT_TRIGGER,
+		RIGHT_TRIGGER = Gamepad.XBoxButtonId.RIGHT_TRIGGER,
 	}
 	
 	enum KeyboardKey {

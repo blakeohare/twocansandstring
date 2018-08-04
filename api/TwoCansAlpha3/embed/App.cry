@@ -1,4 +1,5 @@
 import Game;
+import Gamepad;
 import Graphics2D;
 import Math;
 
@@ -84,12 +85,16 @@ namespace TwoCansAlpha3 {
 				menuKeyConversion[Game.KeyboardKey.D] = MenuCommand.RIGHT;
 			}
 			
+			gamepadAxis = [0.0, 0.0];
+			
 			while (true) {
 				
 				pressedKeysThisFrame.clear();
 				releasedKeysThisFrame.clear();
 				pressedCommandsThisFrame.clear();
 				
+				gamepad = TwoCansApp.getGamepad();
+
 				// Note: multiple clicks in a single frame will get dropped.
 				// Although if the user is worried about this, they'd probably be using
 				// event pumping anyway.
@@ -97,6 +102,12 @@ namespace TwoCansAlpha3 {
 				
 				for (event : window.pumpEvents()) {
 					switch (event.type) {
+						case Game.EventType.GAMEPAD:
+							if (gamepad != null) {
+								inputManager._refreshGamepad(event, menuEvents);
+							}
+							break;
+							
 						case Game.EventType.KEY_DOWN:
 						case Game.EventType.KEY_UP:
 							isDown = event.type == Game.EventType.KEY_DOWN;
@@ -176,7 +187,6 @@ namespace TwoCansAlpha3 {
 						case Game.EventType.TOUCH_START:
 						case Game.EventType.TOUCH_END:
 						case Game.EventType.TOUCH_MOVE:
-							//print(['TOUCH', event.type, event.id, event.x, event.y]);
 							break;
 						
 						case Game.EventType.QUIT:
@@ -224,6 +234,23 @@ namespace TwoCansAlpha3 {
 			}
 			
 			return startSceneClass.createInstance();
+		}
+		
+		static field _cachedGamepad = null;
+		static function getGamepad() {
+			if (TwoCansApp._cachedGamepad != null) return TwoCansApp._cachedGamepad;
+			
+			if (!GamepadManager.isGamepadSupported()) {
+				return null;
+			}
+
+			GamepadManager.refreshDevices();
+
+			if (GamepadManager.getDeviceCount() < 1) return null;
+			gamepad = GamepadManager.getDeviceByIndex(0);
+			TwoCansApp._cachedGamepad = gamepad;
+			gamepad.pushAutoConfigure();
+			return gamepad;
 		}
 	}
 }
