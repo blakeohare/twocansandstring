@@ -1,0 +1,32 @@
+import Graphics2D;
+import Math;
+
+namespace TwoCansAlpha4 {
+	
+	class FadeTransitionScene : AbstractTransitionScene {
+		
+		field _fts_colorRGB;
+		
+		constructor(previousScene, nextScene, durationSeconds = 1.0, allowUpdate = false, fadeColorRGB = null)
+			: base(previousScene, nextScene, durationSeconds, allowUpdate) {
+			
+			this._fts_colorRGB = fadeColorRGB ?? [0, 0, 0];
+		}
+		
+		function renderPreviousOverlay(progress) {
+			this._fadeImpl(progress);
+		}
+		
+		function renderNextOverlay(progress) {
+			this._fadeImpl(1 - progress);
+		}
+		
+		function _fadeImpl(amount) {
+			r = this._fts_colorRGB[0];
+			g = this._fts_colorRGB[1];
+			b = this._fts_colorRGB[2];
+			alpha = Math.floor(amount * 255);
+			Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, r, g, b, alpha);
+		}
+	}
+}

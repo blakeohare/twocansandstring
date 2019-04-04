@@ -1,0 +1,52 @@
+import Graphics2D;
+import ImageResources;
+import Math;
+
+namespace TwoCansAlpha4 {
+	
+	class ImageLoadingScene : AbstractScene {
+		
+		field loader = null;
+		field done = false;
+		field counter = 0;
+		field graphicsLayer;
+		field barBgColor = [80, 80, 80];
+		field barFgColor = [0, 100, 255];
+		
+		constructor() : base() {
+		}
+		
+		function update(inputManager, events) {
+			this.counter++;
+			if (this.done) return;
+			if (this.loader == null) {
+				this.loader = ImageSheet.loadFromResourcesAsync('twocans_everything');
+			}
+			
+			if (!this.done && this.loader.isDone()) {
+				this.done = true;
+				Images._imageSheet = this.loader;
+				this.switchScene(TwoCansApp.getInitialScene());
+			}
+		}
+		
+		function render() {
+			Graphics2D.Draw.fill(0, 0, 0);
+			
+			width = GAME_WIDTH * 4 / 5;
+			height = GAME_HEIGHT / 10;
+			barWidth = Math.floor(width * this.getProgress());
+			x = (GAME_WIDTH - width) / 2;
+			y = (GAME_HEIGHT - height) / 2;
+			
+			Graphics2D.Draw.rectangle(x, y, width, height, this.barBgColor[0], this.barBgColor[1], this.barBgColor[2]);
+			Graphics2D.Draw.rectangle(x, y, barWidth, height, this.barFgColor[0], this.barFgColor[1], this.barFgColor[2]);
+		}
+		
+		function getProgress() {
+			if (this.done) return 1.0;
+			if (this.loader == null) return 0.0;
+			return this.loader.getProgress();
+		}
+	}
+}
