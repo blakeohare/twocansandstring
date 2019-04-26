@@ -11,7 +11,7 @@ namespace TwoCansAlpha4 {
 	const GAME_HEIGHT = $var['game_height'] ?? SCREEN_HEIGHT;
 	const GAME_FPS = ($var['use_60_fps'] == true) ? 60 : 30;
 
-	function startGame() {
+	function main(args) {
 		TwoCansApp.mainLoop();
 	}
 
