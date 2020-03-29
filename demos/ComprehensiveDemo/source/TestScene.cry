@@ -1,6 +1,6 @@
 import Math;
 import Random;
-import TwoCansAlpha2;
+import TwoCansAlpha4;
 import Graphics2D;
 import Graphics2DText;
 

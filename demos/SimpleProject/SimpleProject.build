@@ -1,7 +1,7 @@
 ﻿{
-	"id": "ComprehensiveDemo",
-	"title": "Comprehensive Demo",
-	"description": "Tests most of the features of the SDK.",
+	"id": "SimpleProject",
+	"title": "Simple Project",
+	"description": "Just a simple project with a bunch of balls floating around the screen.",
 	"icons": [
 		"assets/icon32.png",
 		"assets/icon256.png"
@@ -20,15 +20,16 @@
 		{ "id": "twocans_everything", "prefix": "*" }
 	],
 	
-	"guidseed": "com.twocansandstring.demos.ComprehensiveDemo,v1,%TARGET_NAME%",
+	"guidseed": "com.twocansandstring.demos.SimpleProject,v1,%TARGET_NAME%",
 	
 	"vars": [
 		{ "name": "screen_width", "value": 640 },
 		{ "name": "screen_height", "value": 480 },
-		{ "name": "game_title", "value": "Comprehensive Demo" },
-		{ "name": "initial_scene", "value": "TestScene" },
-		{ "name": "use_60_fps", "value": false },
-		{ "name": "enable_wasd", "value": false },
+		{ "name": "use_beta_endpoint", "value": false },
+		{ "name": "game_title", "value": "Simple Project" },
+		{ "name": "initial_scene", "value": "MainScene" },
+		{ "name": "use_60_fps", "value": true },
+		{ "name": "enable_wasd", "value": true },
 		{ "name": "thumbnail", "value": "assets/thumbnail.png" }
 	],
 	
