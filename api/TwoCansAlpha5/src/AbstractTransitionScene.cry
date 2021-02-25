@@ -1,0 +1,68 @@
+import Math;
+
+namespace TwoCansAlpha5 {
+	
+	class AbstractTransitionScene : AbstractScene {
+		
+		field _ats_counter = 0;
+		field _ats_max = 0;
+		field _ats_prevScene;
+		field _ats_nextScene;
+		field _ats_progress = 0.0;
+		field _ats_allowUpdate;
+		
+		constructor(previousScene, nextScene, durationSeconds, allowUpdate) : base() {
+			if (durationSeconds <= 0) throw new InvalidArgumentException("Duration must be greater than 0");
+			fps = ($var['use_60_fps'] == true) ? 60 : 30;
+			this._ats_max = Math.max(1, Math.floor(durationSeconds * fps + .5));
+			this._ats_prevScene = previousScene;
+			this._ats_nextScene = nextScene;
+			this._ats_allowUpdate = allowUpdate == true;
+		}
+		
+		function render() {
+			bg = this._ats_progress < .5 ? this._ats_prevScene : this._ats_nextScene;
+			progress = this._ats_progress * 2;
+			if (progress < 1) {
+				this.renderPrevious(this._ats_prevScene, progress);
+				this.renderPreviousOverlay(progress);
+			} else {
+				progress -= 1;
+				this.renderNext(this._ats_nextScene, progress);
+				this.renderNextOverlay(progress);
+			}
+		}
+		
+		function renderPreviousOverlay(progress) {
+			// Override me.
+		}
+		
+		function renderNextOverlay(progress) {
+			// Override me.
+		}
+		
+		function renderPrevious(scene, progress) {
+			scene.render();
+		}
+		
+		function renderNext(scene, progress) {
+			scene.render();
+		}
+		
+		function update(inputManager, events) {
+			this._ats_counter++;
+			progress = 1.0 * this._ats_counter / this._ats_max;
+			if (progress >= 1) {
+				this.switchScene(this._ats_nextScene);
+				this._ats_progress = 1.0;
+			} else {
+				this._ats_progress = progress;
+			}
+			
+			if (this._ats_allowUpdate) {
+				bg = this._ats_progress < .5 ? this._ats_prevScene : this._ats_nextScene;
+				bg.update(inputManager, events);
+			}
+		}
+	}
+}

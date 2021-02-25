@@ -1,0 +1,125 @@
+import Game;
+import Gamepad;
+import Graphics2D;
+
+namespace TwoCansAlpha5 {
+	
+	enum EventType {
+		KEY,
+		GAMEPAD,
+		MENU,
+		MOUSE_PRESS,
+		MOUSE_RELEASE,
+		MOUSE_MOVE,
+		TOUCH_PRESS,
+		TOUCH_RELEASE,
+		TOUCH_MOVE,
+	}
+	
+	// applied to the .button field of MENU type events.
+	enum MenuCommand {
+		LEFT,
+		UP,
+		RIGHT,
+		DOWN,
+		CONFIRM,
+		BACK,
+	}
+	
+	enum ConsoleButton {
+		AXIS1 = Gamepad.XBoxButtonId.AXIS1,
+		AXIS2 = Gamepad.XBoxButtonId.AXIS2,
+		DPAD = Gamepad.XBoxButtonId.DPAD,
+		A = Gamepad.XBoxButtonId.A,
+		B = Gamepad.XBoxButtonId.B,
+		X = Gamepad.XBoxButtonId.X,
+		Y = Gamepad.XBoxButtonId.Y,
+		START = Gamepad.XBoxButtonId.START,
+		LEFT_BUMPER = Gamepad.XBoxButtonId.LEFT_BUMPER,
+		RIGHT_BUMPER = Gamepad.XBoxButtonId.RIGHT_BUMPER,
+		LEFT_TRIGGER = Gamepad.XBoxButtonId.LEFT_TRIGGER,
+		RIGHT_TRIGGER = Gamepad.XBoxButtonId.RIGHT_TRIGGER,
+	}
+	
+	enum KeyboardKey {
+		A = Game.KeyboardKey.A,
+		APOSTROPHE = Game.KeyboardKey.APOSTROPHE,
+		B = Game.KeyboardKey.B,
+		BACKSLASH = Game.KeyboardKey.BACKSLASH,
+		C = Game.KeyboardKey.C,
+		CLOSE_BRACKET = Game.KeyboardKey.CLOSE_BRACKET,
+		COMMA = Game.KeyboardKey.COMMA,
+		D = Game.KeyboardKey.D,
+		DOWN = Game.KeyboardKey.DOWN,
+		E = Game.KeyboardKey.E,
+		ENTER = Game.KeyboardKey.ENTER,
+		EQUALS = Game.KeyboardKey.EQUALS,
+		ESCAPE = Game.KeyboardKey.ESCAPE,
+		F = Game.KeyboardKey.F,
+		G = Game.KeyboardKey.G,
+		H = Game.KeyboardKey.H,
+		HYPHEN = Game.KeyboardKey.HYPHEN,
+		I = Game.KeyboardKey.I,
+		J = Game.KeyboardKey.J,
+		K = Game.KeyboardKey.K,
+		L = Game.KeyboardKey.L,
+		LEFT = Game.KeyboardKey.LEFT,
+		M = Game.KeyboardKey.M,
+		N = Game.KeyboardKey.N,
+		NUM_0 = Game.KeyboardKey.NUM_0,
+		NUM_1 = Game.KeyboardKey.NUM_1,
+		NUM_2 = Game.KeyboardKey.NUM_2,
+		NUM_3 = Game.KeyboardKey.NUM_3,
+		NUM_4 = Game.KeyboardKey.NUM_4,
+		NUM_5 = Game.KeyboardKey.NUM_5,
+		NUM_6 = Game.KeyboardKey.NUM_6,
+		NUM_7 = Game.KeyboardKey.NUM_7,
+		NUM_8 = Game.KeyboardKey.NUM_8,
+		NUM_9 = Game.KeyboardKey.NUM_9,
+		O = Game.KeyboardKey.O,
+		OPEN_BRACKET = Game.KeyboardKey.OPEN_BRACKET,
+		P = Game.KeyboardKey.P,
+		PAGE_DOWN = Game.KeyboardKey.PAGE_DOWN,
+		PAGE_UP = Game.KeyboardKey.PAGE_UP,
+		PAUSE = Game.KeyboardKey.PAUSE,
+		PERIOD = Game.KeyboardKey.PERIOD,
+		Q = Game.KeyboardKey.Q,
+		R = Game.KeyboardKey.R,
+		RIGHT = Game.KeyboardKey.RIGHT,
+		S = Game.KeyboardKey.S,
+		SEMICOLON = Game.KeyboardKey.SEMICOLON,
+		SLASH = Game.KeyboardKey.SLASH,
+		SPACE = Game.KeyboardKey.SPACE,
+		T = Game.KeyboardKey.T,
+		TAB = Game.KeyboardKey.TAB,
+		U = Game.KeyboardKey.U,
+		UP = Game.KeyboardKey.UP,
+		V = Game.KeyboardKey.V,
+		W = Game.KeyboardKey.W,
+		X = Game.KeyboardKey.X,
+		Y = Game.KeyboardKey.Y,
+		Z = Game.KeyboardKey.Z,
+	}
+	
+	class Event {
+		field type;
+		field down;
+		field up;
+		field button;
+		field key;
+		field x;
+		field y;
+		field pointerId;
+		
+		constructor(type, key, button, x, y, down, pointerId) {
+			this.type = type;
+			this.down = down;
+			this.up = !down;
+			this.key = key;
+			this.pointerId = pointerId;
+			this.button = button;
+			this.x = x;
+			this.y = y;
+		}
+	}
+}

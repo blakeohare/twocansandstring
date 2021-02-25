@@ -1,0 +1,18 @@
+namespace TwoCansAlpha5 {
+	
+	class AbstractScene {
+
+		constructor() { }
+		
+		function switchScene(next) {
+			TwoCansApp._queuedScene = next;
+		}
+		
+		function switchSceneFade(next) {
+			return this.switchScene(new FadeTransitionScene(this, next));
+		}
+		
+		function update(inputManager, events) { }
+		function render() { }
+	}
+}

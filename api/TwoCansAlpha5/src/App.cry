@@ -1,0 +1,256 @@
+import Game;
+import Gamepad;
+import Graphics2D;
+import Math;
+
+namespace TwoCansAlpha5 {
+
+	const SCREEN_WIDTH = $var['screen_width'] ?? 640;
+	const SCREEN_HEIGHT = $var['screen_height'] ?? 480;
+	const GAME_WIDTH = $var['game_width'] ?? SCREEN_WIDTH;
+	const GAME_HEIGHT = $var['game_height'] ?? SCREEN_HEIGHT;
+	const GAME_FPS = ($var['use_60_fps'] == true) ? 60 : 30;
+
+	function main(args) {
+		TwoCansApp.mainLoop();
+	}
+
+	class TwoCansApp {
+		
+		static field sessionId = Util.generateToken(10);
+		
+		static field _queuedScene = null;
+		static field _images = {};
+		static field _rc = 0;
+		
+		static function getRenderCounter() {
+			return TwoCansApp._rc;
+		}
+		
+		static function mainLoop() {
+			activeScene = new ImageLoadingScene();
+			
+			title = $var['game_title'];
+			fps = ($var['use_60_fps'] == true) ? 60 : 30;
+			screen_width = Math.floor(SCREEN_WIDTH);
+			screen_height = Math.floor(SCREEN_HEIGHT);
+			game_width = Math.floor(GAME_WIDTH);
+			game_height = Math.floor(GAME_HEIGHT);
+			
+			resolutions = [[game_width, game_height], [screen_width, screen_height]];
+			for (i = 0; i < 2; ++i) {
+				width = resolutions[i][0];
+				height = resolutions[i][1];
+				name = i == 0 ? "Game screen" : "Screen";
+				if (width > 1024 || height > 600) throw new InvalidArgumentException(name + " size must be smaller than 800 x 600 to fit site UI");
+				if (width < 256 || height < 224) throw new InvalidArgumentException(name + " size is too small");
+				
+				if (width / height < .5) throw new InvalidArgumentException(name + " proportion is too tall.");
+				if (width / height > 2) throw new InvalidArgumentException(name + " proportion is too wide.");
+			}
+			if (game_width > screen_width || game_height > screen_height) {
+				throw new InvalidArgumentException("Game screen dimensions must be smaller than or equal to physical screen size.");
+			}
+			
+			window = new GameWindow(title, fps, game_width, game_height, screen_width, screen_height);
+			
+			window.setPointerCanonicalizationMode(PointerCanonicalizerMode.CONVERT_MOUSE_TO_TOUCH);
+			
+			keyEvents = [];
+			mouseEvents = [];
+			gamepadEvents = [];
+			menuEvents = [];
+			
+			inputManager = InputManager._tcas_internal_makeInputManager();
+			pressedKeys = inputManager._pressedKeys;
+			pressedKeysThisFrame = inputManager._pressedThisFrame;
+			releasedKeysThisFrame = inputManager._releasedThisFrame;
+			pressedCommandsThisFrame = inputManager._pressedCommandsThisFrame;
+			
+			menuKeyConversion = {
+				Game.KeyboardKey.LEFT: MenuCommand.LEFT,
+				Game.KeyboardKey.UP: MenuCommand.UP,
+				Game.KeyboardKey.RIGHT: MenuCommand.RIGHT,
+				Game.KeyboardKey.DOWN: MenuCommand.DOWN,
+				Game.KeyboardKey.ENTER: MenuCommand.CONFIRM,
+				Game.KeyboardKey.SPACE: MenuCommand.CONFIRM,
+				Game.KeyboardKey.ESCAPE: MenuCommand.BACK,
+				Game.KeyboardKey.BACKSPACE: MenuCommand.BACK,
+			};
+			
+			if ($var['enable_wasd'] == true) {
+				menuKeyConversion[Game.KeyboardKey.W] = MenuCommand.UP;
+				menuKeyConversion[Game.KeyboardKey.A] = MenuCommand.LEFT;
+				menuKeyConversion[Game.KeyboardKey.S] = MenuCommand.DOWN;
+				menuKeyConversion[Game.KeyboardKey.D] = MenuCommand.RIGHT;
+			}
+			
+			gamepadAxis = [0.0, 0.0];
+			
+			while (true) {
+				
+				pressedKeysThisFrame.clear();
+				releasedKeysThisFrame.clear();
+				pressedCommandsThisFrame.clear();
+				
+				gamepad = TwoCansApp.getGamepad();
+
+				// Note: multiple clicks in a single frame will get dropped.
+				// Although if the user is worried about this, they'd probably be using
+				// event pumping anyway.
+				inputManager._mouseClickPosition = null;
+				
+				for (event : window.pumpEvents()) {
+					switch (event.type) {
+						case Game.EventType.GAMEPAD:
+							if (gamepad != null) {
+								inputManager._refreshGamepad(event, menuEvents);
+							}
+							break;
+							
+						case Game.EventType.KEY_DOWN:
+						case Game.EventType.KEY_UP:
+							isDown = event.type == Game.EventType.KEY_DOWN;
+							suppress = false;
+							pressedKeys[event.key] = isDown;
+							if (isDown) {
+								pressedKeysThisFrame[event.key] = true;
+							} else {
+								releasedKeysThisFrame[event.key] = true;
+							}
+							switch (event.key) {
+								case Game.KeyboardKey.ALT:
+								case Game.KeyboardKey.SHIFT:
+								case Game.KeyboardKey.CTRL:
+									suppress = true;
+									break;
+									
+								case Game.KeyboardKey.BACKSPACE:
+								case Game.KeyboardKey.BACKTICK:
+								case Game.KeyboardKey.CAPS_LOCK:
+								case Game.KeyboardKey.CONTEXT_MENU:
+								case Game.KeyboardKey.DELETE:
+								case Game.KeyboardKey.END:
+								case Game.KeyboardKey.F1:
+								case Game.KeyboardKey.F2:
+								case Game.KeyboardKey.F3:
+								case Game.KeyboardKey.F4:
+								case Game.KeyboardKey.F5:
+								case Game.KeyboardKey.F6:
+								case Game.KeyboardKey.F7:
+								case Game.KeyboardKey.F8:
+								case Game.KeyboardKey.F9:
+								case Game.KeyboardKey.F10:
+								case Game.KeyboardKey.F11:
+								case Game.KeyboardKey.F12:
+								case Game.KeyboardKey.HOME:
+								case Game.KeyboardKey.INSERT:
+								case Game.KeyboardKey.NUM_LOCK:
+								case Game.KeyboardKey.OS_COMMAND:
+								case Game.KeyboardKey.PRINT_SCREEN:
+								case Game.KeyboardKey.SCROLL_LOCK:
+									suppress = true;
+									break;
+								
+								default:
+									if (isDown) {
+										menuCommand = menuKeyConversion.get(event.key);
+										if (menuCommand != null) {
+											menuEvents.add(new Event(EventType.MENU, menuCommand, menuCommand, 0, 0, true, 0));
+										}
+									}
+									break;
+							}
+							
+							if (!suppress) {
+								//type, key, button, x, y, down
+								keyEvents.add(new Event(EventType.KEY, event.key, null, 0, 0, isDown, 0));
+							}
+							break;
+						
+						case Game.EventType.MOUSE_LEFT_DOWN:
+							mouseEvents.add(new Event(EventType.MOUSE_PRESS, null, null, event.x, event.y, true, 0));
+							inputManager._mouseClickPosition = [event.x, event.y];
+							break;
+							
+						case Game.EventType.MOUSE_LEFT_UP:
+							mouseEvents.add(new Event(EventType.MOUSE_RELEASE, null, null, event.x, event.y, false, 0));
+							break;
+						
+						case Game.EventType.MOUSE_MOVE:
+							mouseEvents.add(new Event(EventType.MOUSE_MOVE, null, null, event.x, event.y, false, 0));
+							mp = inputManager._mousePosition;
+							mp[0] = event.x;
+							mp[1] = event.y;
+							break;
+						
+						case Game.EventType.TOUCH_START:
+						case Game.EventType.TOUCH_END:
+						case Game.EventType.TOUCH_MOVE:
+							break;
+						
+						case Game.EventType.QUIT:
+							return;
+					}
+				}
+				
+				events = keyEvents + mouseEvents;
+				events.concat(menuEvents);
+				events.concat(gamepadEvents);
+				
+				for (menuEvent : menuEvents) {
+					pressedCommandsThisFrame[menuEvent.button] = true;
+				}
+				
+				activeScene.update(inputManager, events);
+				activeScene.render();
+				
+				keyEvents.clear();
+				mouseEvents.clear();
+				menuEvents.clear();
+				gamepadEvents.clear();
+				
+				if (TwoCansApp._queuedScene != null) {
+					activeScene = TwoCansApp._queuedScene;
+					TwoCansApp._queuedScene = null;
+				}
+				
+				TwoCansApp._rc++;
+				
+				window.clockTick();
+			}
+		}
+		
+		static function getInitialScene() {
+			startSceneClass = null;
+			for (scene : Core.Reflection.getClasses(AbstractScene.class)) {
+				if (scene.getName() == $var['initial_scene']) {
+					startSceneClass = scene;
+				}
+			}
+			
+			if (startSceneClass == null) {
+				throw new Exception("Starting scene class not found.");
+			}
+			
+			return startSceneClass.createInstance();
+		}
+		
+		static field _cachedGamepad = null;
+		static function getGamepad() {
+			if (TwoCansApp._cachedGamepad != null) return TwoCansApp._cachedGamepad;
+			
+			if (!GamepadManager.isGamepadSupported()) {
+				return null;
+			}
+
+			GamepadManager.refreshDevices();
+
+			if (GamepadManager.getDeviceCount() < 1) return null;
+			gamepad = GamepadManager.getDeviceByIndex(0);
+			TwoCansApp._cachedGamepad = gamepad;
+			gamepad.pushAutoConfigure();
+			return gamepad;
+		}
+	}
+}
