@@ -23,27 +23,31 @@ namespace TwoCansAlpha5 {
 		field _mouseClickPosition = null;
 		
 		field _axisDigitalState = {
-			Gamepad.XBoxButtonId.AXIS1: [0, 0],
-			Gamepad.XBoxButtonId.AXIS2: [0, 0],
-			Gamepad.XBoxButtonId.DPAD: [0, 0],
+			ConsoleButton.AXIS1: [0, 0],
+			ConsoleButton.AXIS2: [0, 0],
+			ConsoleButton.DPAD: [0, 0],
 		};
 		
 		field _axisAnalogState = {
-			Gamepad.XBoxButtonId.AXIS1: [0.0, 0.0],
-			Gamepad.XBoxButtonId.AXIS2: [0.0, 0.0],
-			Gamepad.XBoxButtonId.DPAD: [0.0, 0.0],
+			ConsoleButton.AXIS1: [0.0, 0.0],
+			ConsoleButton.AXIS2: [0.0, 0.0],
+			ConsoleButton.DPAD: [0.0, 0.0],
 		};
 		field _gamepadButtonState = {
-			Gamepad.XBoxButtonId.A: false,
-			Gamepad.XBoxButtonId.B: false,
-			Gamepad.XBoxButtonId.X: false,
-			Gamepad.XBoxButtonId.Y: false,
-			Gamepad.XBoxButtonId.START: false,
-			Gamepad.XBoxButtonId.LEFT_BUMPER: false,
-			Gamepad.XBoxButtonId.RIGHT_BUMPER: false,
+			ConsoleButton.A: false,
+			ConsoleButton.B: false,
+			ConsoleButton.X: false,
+			ConsoleButton.Y: false,
+			ConsoleButton.START: false,
+			ConsoleButton.LEFT_BUMPER: false,
+			ConsoleButton.RIGHT_BUMPER: false,
 		};
 		
 		function _refreshGamepad(event, menuEventsOut) {
+			if (TIME_TO_MIGRATE_GAMEPAD_STUFF){
+				throw new NotImplementedException();
+			}
+			/*
 			menuButton = null;
 			switch (event.buttonId) {
 				case Gamepad.XBoxButtonId.AXIS1:
@@ -97,12 +101,16 @@ namespace TwoCansAlpha5 {
 			if (menuButton != null) {
 				menuEventsOut.add(new Event(EventType.MENU, menuButton, menuButton, 0, 0, true, 0));
 			}
+			*/
 		}
 		
 		function isShiftPressed() { return this._pressedKeys.get(Game.KeyboardKey.SHIFT, false); }
 		function isCtrlPressed() { return this._pressedKeys.get(Game.KeyboardKey.CTRL, false); }
 		
 		function getAxis(axisName) {
+			if (TIME_TO_MIGRATE_GAMEPAD_STUFF) throw new NotImplementedException();
+			return [0.0, 0.0];
+			/*
 			// Keyboard will override gamepad's AXIS1 value, if any arrow keys are pressed.
 			if (axisName == Gamepad.XBoxButtonId.AXIS1) {
 				output = [null, null];
@@ -118,6 +126,7 @@ namespace TwoCansAlpha5 {
 				}
 			}
 			return this._axisAnalogState[axisName].clone();
+			*/
 		}
 		
 		function isKeyPressed(key) {

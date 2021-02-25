@@ -20,33 +20,33 @@ namespace TwoCansAlpha5 {
 			this._ats_allowUpdate = allowUpdate == true;
 		}
 		
-		function render() {
+		function render(g2d) {
 			bg = this._ats_progress < .5 ? this._ats_prevScene : this._ats_nextScene;
 			progress = this._ats_progress * 2;
 			if (progress < 1) {
-				this.renderPrevious(this._ats_prevScene, progress);
-				this.renderPreviousOverlay(progress);
+				this.renderPrevious(this._ats_prevScene, progress, g2d);
+				this.renderPreviousOverlay(progress, g2d);
 			} else {
 				progress -= 1;
-				this.renderNext(this._ats_nextScene, progress);
-				this.renderNextOverlay(progress);
+				this.renderNext(this._ats_nextScene, progress, g2d);
+				this.renderNextOverlay(progress, g2d);
 			}
 		}
 		
-		function renderPreviousOverlay(progress) {
+		function renderPreviousOverlay(progress, g2d) {
 			// Override me.
 		}
 		
-		function renderNextOverlay(progress) {
+		function renderNextOverlay(progress, g2d) {
 			// Override me.
 		}
 		
-		function renderPrevious(scene, progress) {
-			scene.render();
+		function renderPrevious(scene, progress, g2d) {
+			scene.render(g2d);
 		}
 		
-		function renderNext(scene, progress) {
-			scene.render();
+		function renderNext(scene, progress, g2d) {
+			scene.render(g2d);
 		}
 		
 		function update(inputManager, events) {

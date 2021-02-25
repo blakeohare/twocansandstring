@@ -13,20 +13,20 @@ namespace TwoCansAlpha5 {
 			this._fts_colorRGB = fadeColorRGB ?? [0, 0, 0];
 		}
 		
-		function renderPreviousOverlay(progress) {
-			this._fadeImpl(progress);
+		function renderPreviousOverlay(progress, g2d) {
+			this._fadeImpl(progress, g2d);
 		}
 		
-		function renderNextOverlay(progress) {
-			this._fadeImpl(1 - progress);
+		function renderNextOverlay(progress, g2d) {
+			this._fadeImpl(1 - progress, g2d);
 		}
 		
-		function _fadeImpl(amount) {
+		function _fadeImpl(amount, g2d) {
 			r = this._fts_colorRGB[0];
 			g = this._fts_colorRGB[1];
 			b = this._fts_colorRGB[2];
 			alpha = Math.floor(amount * 255);
-			Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, r, g, b, alpha);
+			g2d.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, r, g, b, alpha);
 		}
 	}
 }

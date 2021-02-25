@@ -8,7 +8,7 @@ namespace TwoCansAlpha5 {
 		FLIP_X = 1,
 	}
 	
-	static class Images {
+	static class ImageLibrary {
 		static field _imageSheet;
 		
 		static field _images = {};
@@ -23,57 +23,21 @@ namespace TwoCansAlpha5 {
 		
 		static function get(path, options = 0) {
 			flipped = (options & ImageOptions.FLIP_X) != 0;
-			img = (flipped ? Images._imagesFlipped : Images._images).get(path);
-			if (img == null) {
-				if (flipped) {
-					img = Images.get(path);
-					img = img.flip(true, false);
-				} else {
-					res = Images._imageSheet.getImage(path);
-					img = Graphics2D.GraphicsTexture.load(res);
-				}
-				(flipped ? Images._imagesFlipped : Images._images)[path] = img;
-			}
+			if (flipped) throw new NotImplementedException(); // TODO(v5)
+			img = ImageLibrary._images[path];
 			return img;
 		}
 		
 		static function getWithHeight(path, height, options = ImageOptions.NONE) {
-			ratio = Images._ratiosForHeight.get(path);
-			if (ratio == null) {
-				img = Images.get(path);
-				ratio = 1.0 * height / img.height;
-				Images._ratiosForHeight[path] = ratio;
-			}
-			return Images.getAtScale(path, ratio, options);
+			throw new NotImplementedException();
 		}
 
 		static function getWithWidth(path, width, options = ImageOptions.NONE) {
-			ratio = Images._ratiosForWidth.get(path);
-			if (ratio == null) {
-				img = Images.get(path);
-				ratio = 1.0 * width / img.width;
-				Images._ratiosForWidth[path] = ratio;
-			}
-			return Images.getAtScale(path, ratio, options);
+			throw new NotImplementedException();
 		}
 
 		static function getAtScale(path, scale, options = ImageOptions.NONE) {
-			size = Math.floor(scale * 100000);
-			flipped = (options & ImageOptions.FLIP_X) != 0;
-			lookup = (flipped ? Images._imagesAtScaleFlipped : Images._imagesAtScale).get(size);
-			if (lookup == null) {
-				lookup = {};
-				(flipped ? Images._imagesAtScaleFlipped : Images._imagesAtScale)[size] = lookup;
-			}
-			img = lookup.get(path);
-			if (img == null) {
-				imgOriginal = Images.get(path, options);
-				width = Math.max(1, Math.floor(imgOriginal.width * scale + .5));
-				height = Math.max(1, Math.floor(imgOriginal.height * scale + .5));
-				img = imgOriginal.scale(width, height);
-				lookup[path] = img;
-			}
-			return img;
+			throw new NotImplementedException();
 		}
 	}
 }

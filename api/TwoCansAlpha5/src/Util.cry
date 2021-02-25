@@ -1,5 +1,7 @@
 namespace TwoCansAlpha5 {
 
+	const TIME_TO_MIGRATE_GAMEPAD_STUFF = false;
+
 	static class Util {
 		
 		// Generates a gibberish token, great for creating a unique ID locally to include

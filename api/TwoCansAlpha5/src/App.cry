@@ -52,10 +52,18 @@ namespace TwoCansAlpha5 {
 				throw new InvalidArgumentException("Game screen dimensions must be smaller than or equal to physical screen size.");
 			}
 			
-			window = new GameWindow(title, fps, game_width, game_height, screen_width, screen_height);
+			window = new GameWindow()
+				.setTitle(title)
+				.setFps(fps)
+				.setGameSize(game_width, game_height)
+				.setWindowSize(screen_width, screen_height);
 			
-			window.setPointerCanonicalizationMode(PointerCanonicalizerMode.CONVERT_MOUSE_TO_TOUCH);
+			// window.setPointerCanonicalizationMode(PointerCanonicalizerMode.CONVERT_MOUSE_TO_TOUCH);
 			
+			window.show(false);
+
+			g2d = window.getDrawingContext();
+
 			keyEvents = [];
 			mouseEvents = [];
 			gamepadEvents = [];
@@ -203,7 +211,7 @@ namespace TwoCansAlpha5 {
 				}
 				
 				activeScene.update(inputManager, events);
-				activeScene.render();
+				activeScene.render(g2d);
 				
 				keyEvents.clear();
 				mouseEvents.clear();
@@ -238,6 +246,9 @@ namespace TwoCansAlpha5 {
 		
 		static field _cachedGamepad = null;
 		static function getGamepad() {
+			if (TIME_TO_MIGRATE_GAMEPAD_STUFF) throw new NotImplementedException();
+			return null;
+			/*
 			if (TwoCansApp._cachedGamepad != null) return TwoCansApp._cachedGamepad;
 			
 			if (!GamepadManager.isGamepadSupported()) {
@@ -251,6 +262,7 @@ namespace TwoCansAlpha5 {
 			TwoCansApp._cachedGamepad = gamepad;
 			gamepad.pushAutoConfigure();
 			return gamepad;
+			*/
 		}
 	}
 }

@@ -13,6 +13,6 @@ namespace TwoCansAlpha5 {
 		}
 		
 		function update(inputManager, events) { }
-		function render() { }
+		function render(g2d) { }
 	}
 }

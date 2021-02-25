@@ -1,5 +1,4 @@
-import Graphics2D;
-import ImageResources;
+import Images;
 import Math;
 
 namespace TwoCansAlpha5 {
@@ -8,45 +7,48 @@ namespace TwoCansAlpha5 {
 		
 		field loader = null;
 		field done = false;
+		field progress = 0.0;
 		field counter = 0;
-		field graphicsLayer;
 		field barBgColor = [80, 80, 80];
 		field barFgColor = [0, 100, 255];
+		field toBlit = [];
+		field allImages = {};
 		
 		constructor() : base() {
+			new Images.ImageResourceLoader()
+				.setOnProgress(ratio => { this.progress = ratio; })
+				.setOnComplete(() => { 
+					this.done = true;
+					this.switchScene(TwoCansApp.getInitialScene());
+				})
+				.setOnImageLoaded((path, bmp) => {
+					this.toBlit.add(bmp);
+					ImageLibrary._images[path] = bmp;
+				})
+				.load();
 		}
 		
 		function update(inputManager, events) {
 			this.counter++;
-			if (this.done) return;
-			if (this.loader == null) {
-				this.loader = ImageSheet.loadFromResourcesAsync('twocans_everything');
-			}
-			
-			if (!this.done && this.loader.isDone()) {
-				this.done = true;
-				Images._imageSheet = this.loader;
-				this.switchScene(TwoCansApp.getInitialScene());
-			}
 		}
 		
-		function render() {
-			Graphics2D.Draw.fill(0, 0, 0);
-			
+		function render(g2d) {
+			g2d.fill(0, 0, 0);
+
+			for (img : this.toBlit) {
+				g2d.drawImage(img, 0, 0);
+				g2d.rectangle(0, 0, img.width, img.height, 0, 0, 0); // do not use .fill() because it will clear out the draw command which is used to pre-load the bitmap in U3.
+			}
+			this.toBlit.clear();
+
 			width = GAME_WIDTH * 4 / 5;
 			height = GAME_HEIGHT / 10;
-			barWidth = Math.floor(width * this.getProgress());
+			barWidth = Math.floor(width * this.progress);
 			x = (GAME_WIDTH - width) / 2;
 			y = (GAME_HEIGHT - height) / 2;
 			
-			Graphics2D.Draw.rectangle(x, y, width, height, this.barBgColor[0], this.barBgColor[1], this.barBgColor[2]);
-			Graphics2D.Draw.rectangle(x, y, barWidth, height, this.barFgColor[0], this.barFgColor[1], this.barFgColor[2]);
-		}
-		
-		function getProgress() {
-			if (this.done) return 1.0;
-			if (this.loader == null) return 0.0;
-			return this.loader.getProgress();
+			g2d.rectangle(x, y, width, height, this.barBgColor[0], this.barBgColor[1], this.barBgColor[2]);
+			g2d.rectangle(x, y, barWidth, height, this.barFgColor[0], this.barFgColor[1], this.barFgColor[2]);
 		}
 	}
 }
