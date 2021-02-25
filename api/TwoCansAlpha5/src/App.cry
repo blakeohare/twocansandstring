@@ -28,7 +28,6 @@ namespace TwoCansAlpha5 {
 		}
 		
 		static function mainLoop() {
-			activeScene = new ImageLoadingScene();
 			
 			title = $var['game_title'];
 			fps = ($var['use_60_fps'] == true) ? 60 : 30;
@@ -62,6 +61,8 @@ namespace TwoCansAlpha5 {
 			
 			window.show(false);
 
+			activeScene = TwoCansApp.getInitialScene();
+			
 			g2d = window.getDrawingContext();
 
 			keyEvents = [];
