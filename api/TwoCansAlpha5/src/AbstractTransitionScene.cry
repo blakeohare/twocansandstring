@@ -13,7 +13,7 @@ namespace TwoCansAlpha5 {
 		
 		constructor(previousScene, nextScene, durationSeconds, allowUpdate) : base() {
 			if (durationSeconds <= 0) throw new InvalidArgumentException("Duration must be greater than 0");
-			fps = ($var['use_60_fps'] == true) ? 60 : 30;
+			fps = ($var['tcas_game_60_fps'] == true) ? 60 : 30;
 			this._ats_max = Math.max(1, Math.floor(durationSeconds * fps + .5));
 			this._ats_prevScene = previousScene;
 			this._ats_nextScene = nextScene;

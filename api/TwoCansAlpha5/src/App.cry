@@ -5,11 +5,11 @@ import Math;
 
 namespace TwoCansAlpha5 {
 
-	const SCREEN_WIDTH = $var['screen_width'] ?? 640;
-	const SCREEN_HEIGHT = $var['screen_height'] ?? 480;
-	const GAME_WIDTH = $var['game_width'] ?? SCREEN_WIDTH;
-	const GAME_HEIGHT = $var['game_height'] ?? SCREEN_HEIGHT;
-	const GAME_FPS = ($var['use_60_fps'] == true) ? 60 : 30;
+	const SCREEN_WIDTH = $var['tcas_game_screen_width'] ?? 640;
+	const SCREEN_HEIGHT = $var['tcas_game_screen_height'] ?? 480;
+	const GAME_WIDTH = $var['tcas_game_width'] ?? SCREEN_WIDTH;
+	const GAME_HEIGHT = $var['tcas_game_height'] ?? SCREEN_HEIGHT;
+	const GAME_FPS = ($var['tcas_game_60_fps'] == true) ? 60 : 30;
 
 	function main(args) {
 		TwoCansApp.mainLoop();
@@ -29,8 +29,8 @@ namespace TwoCansAlpha5 {
 		
 		static function mainLoop() {
 			
-			title = $var['game_title'];
-			fps = ($var['use_60_fps'] == true) ? 60 : 30;
+			title = $var['tcas_game_title'];
+			fps = ($var['tcas_game_60_fps'] == true) ? 60 : 30;
 			screen_width = Math.floor(SCREEN_WIDTH);
 			screen_height = Math.floor(SCREEN_HEIGHT);
 			game_width = Math.floor(GAME_WIDTH);
@@ -62,7 +62,7 @@ namespace TwoCansAlpha5 {
 			window.show(false);
 
 			activeScene = TwoCansApp.getInitialScene();
-			
+
 			g2d = window.getDrawingContext();
 
 			keyEvents = [];
@@ -87,7 +87,7 @@ namespace TwoCansAlpha5 {
 				Game.KeyboardKey.BACKSPACE: MenuCommand.BACK,
 			};
 			
-			if ($var['enable_wasd'] == true) {
+			if ($var['tcas_game_enable_wasd'] == true) {
 				menuKeyConversion[Game.KeyboardKey.W] = MenuCommand.UP;
 				menuKeyConversion[Game.KeyboardKey.A] = MenuCommand.LEFT;
 				menuKeyConversion[Game.KeyboardKey.S] = MenuCommand.DOWN;
@@ -233,7 +233,7 @@ namespace TwoCansAlpha5 {
 		static function getInitialScene() {
 			startSceneClass = null;
 			for (scene : Core.Reflection.getClasses(AbstractScene.class)) {
-				if (scene.getName() == $var['initial_scene']) {
+				if (scene.getName() == $var['tcas_game_initial_scene']) {
 					startSceneClass = scene;
 				}
 			}
